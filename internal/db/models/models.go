@@ -17,7 +17,7 @@ type User struct {
 	Username  string
 	Email     string
 	Password  string
-	Mobile    int32
+	Mobile    string
 	Role      int32
 	IsActive  bool
 	CreatedAt time.Time

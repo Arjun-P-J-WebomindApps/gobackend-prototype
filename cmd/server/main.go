@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/config"
 
@@ -16,15 +15,17 @@ import (
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
-const defaultPort = "8080"
+const defaultPort = "8000"
 
 func graphQlServer() {
-	port := os.Getenv("PORT")
+	port := "8000"
 	if port == "" {
 		port = defaultPort
 	}
 
-	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
+		DB: config.AppContext.DB,
+	}}))
 
 	srv.AddTransport(transport.Options{})
 	srv.AddTransport(transport.GET{})

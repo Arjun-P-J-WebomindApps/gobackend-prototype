@@ -7,7 +7,7 @@ type User{
     username:String!
     email:String!
     password:String!
-    mobile:Int!
+    mobile:String!
     role:Int!
     isActive:Boolean!
     createdAt:Time!
@@ -17,4 +17,18 @@ type User{
 
 type Query{
     users:[User!]!
+}
+
+input CreateUserInput{
+    name:String!
+    username:String!
+    email:String!
+    password:String!
+    mobile:String!
+    role:Int!
+    isActive:Boolean!
+}
+
+type Mutation{
+    createUser(input:CreateUserInput!):User!
 }

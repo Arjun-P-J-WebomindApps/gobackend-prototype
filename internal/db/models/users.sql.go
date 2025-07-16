@@ -25,7 +25,7 @@ type CreateUserParams struct {
 	Username  string
 	Email     string
 	Password  string
-	Mobile    int32
+	Mobile    string
 	Role      int32
 	IsActive  bool
 	CreatedAt time.Time
@@ -62,4 +62,43 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.DeletedAt,
 	)
 	return i, err
+}
+
+const getAllUsers = `-- name: GetAllUsers :many
+SELECT id, name, username, email, password, mobile, role, is_active, created_at, updated_at, deleted_at FROM users
+`
+
+func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
+	rows, err := q.db.QueryContext(ctx, getAllUsers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []User
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Username,
+			&i.Email,
+			&i.Password,
+			&i.Mobile,
+			&i.Role,
+			&i.IsActive,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
