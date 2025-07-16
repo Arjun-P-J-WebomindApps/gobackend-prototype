@@ -1,0 +1,20 @@
+scalar UUID
+scalar Time
+
+type User{
+    id: UUID
+    name:String!
+    username:String!
+    email:String!
+    password:String!
+    mobile:Int!
+    role:Int!
+    isActive:Boolean!
+    createdAt:Time!
+    updatedAt:Time!
+    deletedAt:Time
+}
+
+type Query{
+    users:[User!]!
+}
