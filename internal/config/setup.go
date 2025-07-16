@@ -8,6 +8,12 @@ import (
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/routers"
 )
 
+type Context struct{
+	db *db.DBContext
+}
+
+var AppContext *Context
+
 func Setup() {
 	LoadEnv()
 
@@ -28,9 +34,10 @@ func loadPort() string{
 //Setup the database
 func setupDatabase(){
 	db.Connect(
+		AppContext.db.Queries,
 		GetEnv("DB_HOST","localhost"),
 		GetEnv("DB_USER","postgres"),
-		GetEnv("DB_PASSWORD",""),
+		GetEnv("DB_PASSWORD","Postgres@WebomindApps"),
 		GetEnv("DB_NAME","postgres"),
 		GetEnv("DB_PORT","5432"),
 		GetEnv("SSL_MODE","disable"),

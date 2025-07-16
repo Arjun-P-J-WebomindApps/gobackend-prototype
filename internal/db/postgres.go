@@ -1,17 +1,43 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
+	"log"
 
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/db/models"
+	_ "github.com/lib/pq"
 )
 
-var DB *gorm.DB
+type DBContext struct{
+	Queries *models.Queries
+}
+
+//GORM
+// func Connect(host string,user string,password string,dbName string,dbPort string,sslMode string) {
+// 	dsn:=fmt.Sprintf(
+// 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
+// 		host,
+// 		user,
+// 		password,
+// 		dbName,
+// 		dbPort,
+// 		sslMode,
+// 	)
+
+// 	database,err:=gorm.Open(postgres.Open(dsn),&gorm.Config{})
+
+// 	if err!=nil{
+// 		panic("Error connecting to database"+err.Error())
+// 	}
+
+// 	DB=database
+// }
 
 
-func Connect(host string,user string,password string,dbName string,dbPort string,sslMode string) {
-	dsn:=fmt.Sprintf(
+
+func Connect(queries *models.Queries,host string,user string,password string,dbName string,dbPort string,sslMode string) {
+	dbUrl:=fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
 		host,
 		user,
@@ -21,12 +47,12 @@ func Connect(host string,user string,password string,dbName string,dbPort string
 		sslMode,
 	)
 
-	database,err:=gorm.Open(postgres.Open(dsn),&gorm.Config{})
-	
+	database,err:=sql.Open("postgres",dbUrl)
 
 	if err!=nil{
-		panic("Error connecting to database"+err.Error())
+		log.Fatal("Error connecting to database"+err.Error())
 	}
 
-	DB=database
+	queries = models.New(database)
+	
 }

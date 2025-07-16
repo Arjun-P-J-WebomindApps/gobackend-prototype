@@ -4,6 +4,6 @@ import (
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/config"
 )
 
-func main(){
+func main() {
 	config.Setup()
 }
