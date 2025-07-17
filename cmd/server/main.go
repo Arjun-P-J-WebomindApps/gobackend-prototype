@@ -47,5 +47,6 @@ func graphQlServer() {
 
 func main() {
 	config.Setup()
+
 	graphQlServer()
 }

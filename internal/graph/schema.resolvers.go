@@ -33,7 +33,9 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 	})
 
 	if err != nil {
-		log.Fatal("Couldn't add user" + err.Error())
+		log.Println("Couldn't add user " + err.Error())
+		fmt.Println("error for ", input.Name, input.Username)
+		return nil, fmt.Errorf("could not create user: %w", err)
 	}
 
 	return &user, nil
