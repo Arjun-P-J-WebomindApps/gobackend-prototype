@@ -4,23 +4,20 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/context"
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/db"
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/routers"
 )
 
-type Context struct {
-	DB *db.DBContext
-}
-
-var AppContext *Context
+var AppContext *context.Context
 
 func Setup() {
 	LoadEnv()
 
-	AppContext = &Context{}
+	AppContext = &context.Context{}
 
 	setupDatabase()
-	//startServer()
+	startServer()
 }
 
 // Loads the port
@@ -51,6 +48,6 @@ func setupDatabase() {
 // Defines and start the router
 func startServer() {
 	port := loadPort()
-	r := routers.NewRouter()
+	r := routers.NewRouter(AppContext)
 	r.Run(":" + port)
 }

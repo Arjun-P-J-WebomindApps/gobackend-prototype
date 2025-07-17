@@ -2,7 +2,7 @@ scalar UUID
 scalar Time
 
 type User{
-    id: UUID
+    id: UUID!
     name:String!
     username:String!
     email:String!
@@ -15,10 +15,6 @@ type User{
     deletedAt:Time
 }
 
-type Query{
-    users:[User!]!
-}
-
 input CreateUserInput{
     name:String!
     username:String!
@@ -29,6 +25,40 @@ input CreateUserInput{
     isActive:Boolean!
 }
 
+type UserOTP{
+    id:UUID!
+    userId:UUID!
+    otpCode:String!
+    expiresAt:Time!
+    isUsed:Boolean!
+    createdAt:Time!
+}
+
+input CreateUserOTPInput{
+    user_id:UUID!
+}
+
+type UserSession{
+    session_id:UUID!
+    user_id:UUID!
+    createdAt:Time!
+    expiresAt:Time!
+    ipAddress:String!
+}
+
+input CreateUserSessionInput{
+    user_id:UUID!
+}
+
+
+type Query{
+    users:[User!]!
+}
+
 type Mutation{
     createUser(input:CreateUserInput!):User!
+    createUserOTP(input:CreateUserOTPInput!):UserOTP!
+    createUserSession(input:CreateUserSessionInput!):UserSession!
 }
+
+

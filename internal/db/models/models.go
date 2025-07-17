@@ -24,3 +24,20 @@ type User struct {
 	UpdatedAt time.Time
 	DeletedAt sql.NullTime
 }
+
+type UserOtp struct {
+	ID        int32
+	UserID    uuid.UUID
+	OtpCode   string
+	ExpiresAt time.Time
+	IsUsed    sql.NullBool
+	CreatedAt sql.NullTime
+}
+
+type UserSession struct {
+	SessionID uuid.UUID
+	UserID    uuid.UUID
+	CreatedAt sql.NullTime
+	ExpiresAt time.Time
+	IpAddress string
+}

@@ -12,6 +12,7 @@ import (
 
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/db/models"
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/graph/model"
+	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/utils"
 	"github.com/google/uuid"
 )
 
@@ -41,6 +42,33 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 	return &user, nil
 }
 
+// CreateUserOtp is the resolver for the createUserOTP field.
+func (r *mutationResolver) CreateUserOtp(ctx context.Context, input model.CreateUserOTPInput) (*models.UserOtp, error) {
+	id := uuid.New()
+
+	code, errCode := utils.GenerateNumericOTP(6)
+
+	if errCode != nil {
+		log.Println("OTP creation failed")
+	}
+
+	otp, err := r.DB.Queries.CreateOTP(
+		ctx,
+		models.CreateOTPParams{
+			ID:        id,
+			UserID:    input.UserID,
+			OtpCode:   code,
+			IsUsed:    false,
+			CreatedAt: time.Now(),
+			ExpiresAt: time.Now().Add(time.Duration.Minutes() * 5),
+		})
+}
+
+// CreateUserSession is the resolver for the createUserSession field.
+func (r *mutationResolver) CreateUserSession(ctx context.Context, input model.CreateUserSessionInput) (*models.UserSession, error) {
+	panic(fmt.Errorf("not implemented: CreateUserSession - createUserSession"))
+}
+
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*models.User, error) {
 	// panic(fmt.Errorf("not implemented: Users - users"))
@@ -54,7 +82,8 @@ func (r *queryResolver) Users(ctx context.Context) ([]*models.User, error) {
 	}
 
 	if err != nil {
-		log.Fatal("Couldn't get all users" + err.Error())
+		log.Println("Couldn't get all users" + err.Error())
+		return userPointer, nil
 	}
 
 	return userPointer, nil
@@ -63,6 +92,26 @@ func (r *queryResolver) Users(ctx context.Context) ([]*models.User, error) {
 // DeletedAt is the resolver for the deletedAt field.
 func (r *userResolver) DeletedAt(ctx context.Context, obj *models.User) (*time.Time, error) {
 	panic(fmt.Errorf("not implemented: DeletedAt - deletedAt"))
+}
+
+// ID is the resolver for the id field.
+func (r *userOTPResolver) ID(ctx context.Context, obj *models.UserOtp) (uuid.UUID, error) {
+	panic(fmt.Errorf("not implemented: ID - id"))
+}
+
+// IsUsed is the resolver for the isUsed field.
+func (r *userOTPResolver) IsUsed(ctx context.Context, obj *models.UserOtp) (bool, error) {
+	panic(fmt.Errorf("not implemented: IsUsed - isUsed"))
+}
+
+// CreatedAt is the resolver for the createdAt field.
+func (r *userOTPResolver) CreatedAt(ctx context.Context, obj *models.UserOtp) (*time.Time, error) {
+	panic(fmt.Errorf("not implemented: CreatedAt - createdAt"))
+}
+
+// CreatedAt is the resolver for the createdAt field.
+func (r *userSessionResolver) CreatedAt(ctx context.Context, obj *models.UserSession) (*time.Time, error) {
+	panic(fmt.Errorf("not implemented: CreatedAt - createdAt"))
 }
 
 // Mutation returns MutationResolver implementation.
@@ -74,6 +123,14 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 // User returns UserResolver implementation.
 func (r *Resolver) User() UserResolver { return &userResolver{r} }
 
+// UserOTP returns UserOTPResolver implementation.
+func (r *Resolver) UserOTP() UserOTPResolver { return &userOTPResolver{r} }
+
+// UserSession returns UserSessionResolver implementation.
+func (r *Resolver) UserSession() UserSessionResolver { return &userSessionResolver{r} }
+
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type userResolver struct{ *Resolver }
+type userOTPResolver struct{ *Resolver }
+type userSessionResolver struct{ *Resolver }

@@ -13,6 +13,75 @@ import (
 	"github.com/google/uuid"
 )
 
+const createOTP = `-- name: CreateOTP :one
+INSERT INTO user_otps (id,user_id,otp_code,expires_at,is_used,created_at)
+VALUES ($1,$2,$3,$4,$5,$6)
+RETURNING id, user_id, otp_code, expires_at, is_used, created_at
+`
+
+type CreateOTPParams struct {
+	ID        int32
+	UserID    uuid.UUID
+	OtpCode   string
+	ExpiresAt time.Time
+	IsUsed    sql.NullBool
+	CreatedAt sql.NullTime
+}
+
+func (q *Queries) CreateOTP(ctx context.Context, arg CreateOTPParams) (UserOtp, error) {
+	row := q.db.QueryRowContext(ctx, createOTP,
+		arg.ID,
+		arg.UserID,
+		arg.OtpCode,
+		arg.ExpiresAt,
+		arg.IsUsed,
+		arg.CreatedAt,
+	)
+	var i UserOtp
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.OtpCode,
+		&i.ExpiresAt,
+		&i.IsUsed,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const createSession = `-- name: CreateSession :one
+INSERT INTO user_sessions (session_id,user_id,created_at,expires_at,ip_address)
+VALUES ($1,$2,$3,$4,$5)
+RETURNING session_id, user_id, created_at, expires_at, ip_address
+`
+
+type CreateSessionParams struct {
+	SessionID uuid.UUID
+	UserID    uuid.UUID
+	CreatedAt sql.NullTime
+	ExpiresAt time.Time
+	IpAddress string
+}
+
+func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (UserSession, error) {
+	row := q.db.QueryRowContext(ctx, createSession,
+		arg.SessionID,
+		arg.UserID,
+		arg.CreatedAt,
+		arg.ExpiresAt,
+		arg.IpAddress,
+	)
+	var i UserSession
+	err := row.Scan(
+		&i.SessionID,
+		&i.UserID,
+		&i.CreatedAt,
+		&i.ExpiresAt,
+		&i.IpAddress,
+	)
+	return i, err
+}
+
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (id,name,username,email,password,mobile,role,is_active,created_at,updated_at,deleted_at)
 VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) 
