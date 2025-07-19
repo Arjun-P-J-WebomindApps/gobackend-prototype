@@ -14,6 +14,7 @@ import (
 
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/context"
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/graph"
+	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/graph/resolvers"
 )
 
 type GraphQL struct {
@@ -23,7 +24,7 @@ type GraphQL struct {
 }
 
 func (graphql *GraphQL) CreateGraphQLHandler() {
-	graphql.handler = handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{DB: graphql.AppCtx.DB}}))
+	graphql.handler = handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &resolvers.Resolver{DB: graphql.AppCtx.DB}}))
 
 	graphql.handler.AddTransport(transport.Options{})
 	graphql.handler.AddTransport(transport.GET{})

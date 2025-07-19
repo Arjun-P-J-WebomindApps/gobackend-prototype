@@ -20,8 +20,8 @@ CREATE TABLE user_otps (
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   otp_code VARCHAR NOT NULL,
   expires_at TIMESTAMP NOT NULL,
-  is_used BOOLEAN DEFAULT FALSE, -- if logged out and then try to reuse same otp before expiry will not allow
-  created_at TIMESTAMP DEFAULT NOW()
+  is_used BOOLEAN NOT NULL DEFAULT FALSE, -- if logged out and then try to reuse same otp before expiry will not allow
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE user_sessions (

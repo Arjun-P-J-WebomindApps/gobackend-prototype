@@ -30,8 +30,8 @@ type UserOtp struct {
 	UserID    uuid.UUID
 	OtpCode   string
 	ExpiresAt time.Time
-	IsUsed    sql.NullBool
-	CreatedAt sql.NullTime
+	IsUsed    bool
+	CreatedAt time.Time
 }
 
 type UserSession struct {

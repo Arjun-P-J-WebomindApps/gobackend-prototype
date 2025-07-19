@@ -14,23 +14,21 @@ import (
 )
 
 const createOTP = `-- name: CreateOTP :one
-INSERT INTO user_otps (id,user_id,otp_code,expires_at,is_used,created_at)
-VALUES ($1,$2,$3,$4,$5,$6)
+INSERT INTO user_otps (user_id,otp_code,expires_at,is_used,created_at)
+VALUES ($1,$2,$3,$4,$5)
 RETURNING id, user_id, otp_code, expires_at, is_used, created_at
 `
 
 type CreateOTPParams struct {
-	ID        int32
 	UserID    uuid.UUID
 	OtpCode   string
 	ExpiresAt time.Time
-	IsUsed    sql.NullBool
-	CreatedAt sql.NullTime
+	IsUsed    bool
+	CreatedAt time.Time
 }
 
 func (q *Queries) CreateOTP(ctx context.Context, arg CreateOTPParams) (UserOtp, error) {
 	row := q.db.QueryRowContext(ctx, createOTP,
-		arg.ID,
 		arg.UserID,
 		arg.OtpCode,
 		arg.ExpiresAt,
@@ -133,6 +131,15 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
+const deleteUserOTPByUserId = `-- name: DeleteUserOTPByUserId :exec
+DELETE FROM user_otps WHERE user_id=$1
+`
+
+func (q *Queries) DeleteUserOTPByUserId(ctx context.Context, userID uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteUserOTPByUserId, userID)
+	return err
+}
+
 const getAllUsers = `-- name: GetAllUsers :many
 SELECT id, name, username, email, password, mobile, role, is_active, created_at, updated_at, deleted_at FROM users
 `
@@ -170,4 +177,22 @@ func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const getLatestOTPFromUser = `-- name: GetLatestOTPFromUser :one
+SELECT id, user_id, otp_code, expires_at, is_used, created_at FROM user_otps WHERE user_id=$1 ORDER BY created_at DESC LIMIT 1
+`
+
+func (q *Queries) GetLatestOTPFromUser(ctx context.Context, userID uuid.UUID) (UserOtp, error) {
+	row := q.db.QueryRowContext(ctx, getLatestOTPFromUser, userID)
+	var i UserOtp
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.OtpCode,
+		&i.ExpiresAt,
+		&i.IsUsed,
+		&i.CreatedAt,
+	)
+	return i, err
 }
