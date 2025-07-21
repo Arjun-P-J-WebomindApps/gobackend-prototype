@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/context"
+	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/app_context"
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/handlers"
 	"github.com/gin-gonic/gin"
 )
@@ -17,7 +17,7 @@ type CORS struct {
 	AllowCredentials bool
 }
 
-func NewRouter(appCtx *context.Context) *gin.Engine {
+func NewRouter(appCtx *app_context.Context) *gin.Engine {
 	router := gin.Default()
 	cors := CORS{
 		AllowedOrigins: []string{"http://localhost:8000"},

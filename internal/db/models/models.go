@@ -11,18 +11,32 @@ import (
 	"github.com/google/uuid"
 )
 
+type RefreshToken struct {
+	ID         uuid.UUID
+	UserID     uuid.UUID
+	SessionID  uuid.UUID
+	TokenHash  string
+	IpAddress  sql.NullString
+	UserAgent  sql.NullString
+	CreatedAt  time.Time
+	ExpiresAt  time.Time
+	RevokedAt  sql.NullTime
+	ReplacedBy uuid.NullUUID
+}
+
 type User struct {
-	ID        uuid.UUID
-	Name      string
-	Username  string
-	Email     string
-	Password  string
-	Mobile    string
-	Role      int32
-	IsActive  bool
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt sql.NullTime
+	ID          uuid.UUID
+	Name        string
+	Username    string
+	Email       string
+	Password    string
+	Mobile      string
+	Role        int32
+	IsActive    bool
+	MaxSessions int32
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   sql.NullTime
 }
 
 type UserOtp struct {
@@ -37,7 +51,9 @@ type UserOtp struct {
 type UserSession struct {
 	SessionID uuid.UUID
 	UserID    uuid.UUID
-	CreatedAt sql.NullTime
-	ExpiresAt time.Time
 	IpAddress string
+	UserAgent string
+	CreatedAt time.Time
+	ExpiresAt time.Time
+	RevokedAt sql.NullTime
 }

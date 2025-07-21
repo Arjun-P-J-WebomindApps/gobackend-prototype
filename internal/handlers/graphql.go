@@ -3,28 +3,26 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/vektah/gqlparser/v2/ast"
-
-	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/context"
-	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/graph"
+	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/app_context"
+	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/graph/generated"
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/graph/resolvers"
+	"github.com/gin-gonic/gin"
+	"github.com/vektah/gqlparser/v2/ast"
 )
 
 type GraphQL struct {
-	AppCtx     *context.Context
+	AppCtx     *app_context.Context
 	handler    *handler.Server
 	playground *http.HandlerFunc
 }
 
 func (graphql *GraphQL) CreateGraphQLHandler() {
-	graphql.handler = handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &resolvers.Resolver{DB: graphql.AppCtx.DB}}))
+	graphql.handler = handler.New(generated.NewExecutableSchema(generated.Config{Resolvers: &resolvers.Resolver{DB: graphql.AppCtx.DB}}))
 
 	graphql.handler.AddTransport(transport.Options{})
 	graphql.handler.AddTransport(transport.GET{})

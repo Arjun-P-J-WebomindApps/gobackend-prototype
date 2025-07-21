@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/context"
+	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/app_context"
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/db"
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/routers"
 )
 
-var AppContext *context.Context
+var AppContext *app_context.Context
 
 func Setup() {
 	LoadEnv()
 
-	AppContext = &context.Context{}
+	AppContext = &app_context.Context{}
 
 	setupDatabase()
 	startServer()

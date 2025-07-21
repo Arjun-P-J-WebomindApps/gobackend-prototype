@@ -3,8 +3,31 @@
 package model
 
 import (
+	"time"
+
+	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/db/models"
 	"github.com/google/uuid"
 )
+
+type AuthPayload struct {
+	AccessToken  *string      `json:"accessToken,omitempty"`
+	RefreshToken *string      `json:"refreshToken,omitempty"`
+	User         *models.User `json:"user,omitempty"`
+	SessionID    *string      `json:"sessionId,omitempty"`
+	UserID       *string      `json:"userId,omitempty"`
+}
+
+type CreateRefreshTokenInput struct {
+	ID         uuid.UUID  `json:"id"`
+	UserID     uuid.UUID  `json:"userId"`
+	SessionID  *uuid.UUID `json:"sessionId,omitempty"`
+	TokenHash  string     `json:"tokenHash"`
+	IPAddress  string     `json:"ipAddress"`
+	UserAgent  string     `json:"userAgent"`
+	ExpiresAt  time.Time  `json:"expiresAt"`
+	RevokedAt  *time.Time `json:"revokedAt,omitempty"`
+	ReplacedBy *uuid.UUID `json:"replacedBy,omitempty"`
+}
 
 type CreateUserInput struct {
 	Name     string `json:"name"`
@@ -17,15 +40,39 @@ type CreateUserInput struct {
 }
 
 type CreateUserOTPInput struct {
-	UserID uuid.UUID `json:"user_id"`
+	UserID    uuid.UUID `json:"userId"`
+	OtpCode   string    `json:"otpCode"`
+	ExpiresAt time.Time `json:"expiresAt"`
 }
 
 type CreateUserSessionInput struct {
-	UserID uuid.UUID `json:"user_id"`
+	UserID    uuid.UUID `json:"userId"`
+	IPAddress string    `json:"ipAddress"`
+	UserAgent string    `json:"userAgent"`
+	ExpiresAt time.Time `json:"expiresAt"`
+}
+
+type LoginInput struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type Mutation struct {
 }
 
 type Query struct {
+}
+
+type RefreshTokenInput struct {
+	SessionID string `json:"sessionId"`
+}
+
+type SessionStatus struct {
+	Valid bool         `json:"valid"`
+	User  *models.User `json:"user,omitempty"`
+}
+
+type VerifyOTPInput struct {
+	UserID  uuid.UUID `json:"userId"`
+	OtpCode string    `json:"otpCode"`
 }

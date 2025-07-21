@@ -1,0 +1,129 @@
+#---------------------------------
+# User
+#---------------------------------
+
+type User {
+  id: UUID!
+  name: String!
+  username: String!
+  email: String!
+  password: String!
+  mobile: String!
+  role: Int!
+  isActive: Boolean!
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: Time
+}
+
+input CreateUserInput {
+  name: String!
+  username: String!
+  email: String!
+  password: String!
+  mobile: String!
+  role: Int!
+  isActive: Boolean!
+}
+
+#---------------------------------------------------------------
+#OTP
+#--------------------------------------------------------------
+
+type UserOTP {
+  id: UUID!
+  userId: UUID!
+  otpCode: String!
+  expiresAt: Time!
+  isUsed: Boolean!
+  createdAt: Time!
+}
+
+input CreateUserOTPInput {
+  userId: UUID!
+  otpCode: String!
+  expiresAt: Time!
+}
+
+#-------------------------------------------------------------
+#Session
+#------------------------------------------------------------
+
+type UserSession {
+  sessionId: UUID!
+  userId: UUID!
+  ipAddress: String!
+  userAgent: String!
+  createdAt: Time!
+  expiresAt: Time!
+  revokedAt: Time
+}
+
+input CreateUserSessionInput {
+  userId: UUID!
+  ipAddress: String!
+  userAgent: String!
+  expiresAt: Time!
+}
+
+# -------------------------------
+# Refresh Token
+# -------------------------------
+
+type RefreshToken {
+  id: UUID!
+  userId: UUID!
+  sessionId: UUID
+  tokenHash: String!
+  ipAddress: String
+  userAgent: String
+  createdAt: Time!
+  expiresAt: Time!
+  revokedAt: Time
+  replacedBy: UUID
+}
+
+input CreateRefreshTokenInput {
+  id: UUID!
+  userId: UUID!
+  sessionId: UUID
+  tokenHash: String!
+  ipAddress: String!
+  userAgent: String!
+  expiresAt: Time!
+  revokedAt: Time
+  replacedBy: UUID
+}
+
+type AuthPayload {
+  accessToken: String
+  refreshToken: String
+  user: User
+  sessionId: String
+  userId:String
+}
+
+#--Login---------------------------------------
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+#--OTP------------------------------------------
+
+input VerifyOTPInput {
+  userId: UUID!
+  otpCode: String!
+}
+
+#--Refresh Token----------------------------------
+
+input RefreshTokenInput {
+  sessionId: String!
+}
+
+type SessionStatus {
+  valid: Boolean!
+  user: User
+}

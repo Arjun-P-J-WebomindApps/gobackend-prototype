@@ -14,8 +14,11 @@ import (
 )
 
 const createOTP = `-- name: CreateOTP :one
-INSERT INTO user_otps (user_id,otp_code,expires_at,is_used,created_at)
-VALUES ($1,$2,$3,$4,$5)
+
+INSERT INTO user_otps
+    (user_id,otp_code,expires_at,is_used,created_at)
+VALUES
+    ($1, $2, $3, $4, $5)
 RETURNING id, user_id, otp_code, expires_at, is_used, created_at
 `
 
@@ -27,6 +30,8 @@ type CreateOTPParams struct {
 	CreatedAt time.Time
 }
 
+// OTP----------------------------------------------------------------
+// id is created internally
 func (q *Queries) CreateOTP(ctx context.Context, arg CreateOTPParams) (UserOtp, error) {
 	row := q.db.QueryRowContext(ctx, createOTP,
 		arg.UserID,
@@ -47,59 +52,78 @@ func (q *Queries) CreateOTP(ctx context.Context, arg CreateOTPParams) (UserOtp, 
 	return i, err
 }
 
-const createSession = `-- name: CreateSession :one
-INSERT INTO user_sessions (session_id,user_id,created_at,expires_at,ip_address)
-VALUES ($1,$2,$3,$4,$5)
-RETURNING session_id, user_id, created_at, expires_at, ip_address
+const createRefreshToken = `-- name: CreateRefreshToken :one
+
+
+INSERT INTO refresh_tokens
+    (id, user_id,session_id, token_hash, created_at, expires_at, revoked_at)
+VALUES
+    ($1, $2, $3, $4, $5, $6, $7)
+RETURNING id, user_id, session_id, token_hash, ip_address, user_agent, created_at, expires_at, revoked_at, replaced_by
 `
 
-type CreateSessionParams struct {
-	SessionID uuid.UUID
+type CreateRefreshTokenParams struct {
+	ID        uuid.UUID
 	UserID    uuid.UUID
-	CreatedAt sql.NullTime
+	SessionID uuid.UUID
+	TokenHash string
+	CreatedAt time.Time
 	ExpiresAt time.Time
-	IpAddress string
+	RevokedAt sql.NullTime
 }
 
-func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (UserSession, error) {
-	row := q.db.QueryRowContext(ctx, createSession,
-		arg.SessionID,
+// Refresh Token --------------------------------------------------------
+func (q *Queries) CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (RefreshToken, error) {
+	row := q.db.QueryRowContext(ctx, createRefreshToken,
+		arg.ID,
 		arg.UserID,
+		arg.SessionID,
+		arg.TokenHash,
 		arg.CreatedAt,
 		arg.ExpiresAt,
-		arg.IpAddress,
+		arg.RevokedAt,
 	)
-	var i UserSession
+	var i RefreshToken
 	err := row.Scan(
-		&i.SessionID,
+		&i.ID,
 		&i.UserID,
+		&i.SessionID,
+		&i.TokenHash,
+		&i.IpAddress,
+		&i.UserAgent,
 		&i.CreatedAt,
 		&i.ExpiresAt,
-		&i.IpAddress,
+		&i.RevokedAt,
+		&i.ReplacedBy,
 	)
 	return i, err
 }
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (id,name,username,email,password,mobile,role,is_active,created_at,updated_at,deleted_at)
-VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) 
-RETURNING id, name, username, email, password, mobile, role, is_active, created_at, updated_at, deleted_at
+
+INSERT INTO users
+    (id,name,username,email,password,mobile,role,is_active,max_sessions,created_at,updated_at,deleted_at)
+VALUES
+    ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+RETURNING id, name, username, email, password, mobile, role, is_active, max_sessions, created_at, updated_at, deleted_at
 `
 
 type CreateUserParams struct {
-	ID        uuid.UUID
-	Name      string
-	Username  string
-	Email     string
-	Password  string
-	Mobile    string
-	Role      int32
-	IsActive  bool
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt sql.NullTime
+	ID          uuid.UUID
+	Name        string
+	Username    string
+	Email       string
+	Password    string
+	Mobile      string
+	Role        int32
+	IsActive    bool
+	MaxSessions int32
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   sql.NullTime
 }
 
+// User---------------------------------------------------------------
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
 	row := q.db.QueryRowContext(ctx, createUser,
 		arg.ID,
@@ -110,6 +134,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.Mobile,
 		arg.Role,
 		arg.IsActive,
+		arg.MaxSessions,
 		arg.CreatedAt,
 		arg.UpdatedAt,
 		arg.DeletedAt,
@@ -124,6 +149,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.Mobile,
 		&i.Role,
 		&i.IsActive,
+		&i.MaxSessions,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
@@ -131,8 +157,48 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
+const createUserSession = `-- name: CreateUserSession :one
+
+INSERT INTO user_sessions
+    (session_id,user_id,created_at,expires_at,ip_address)
+VALUES
+    ($1, $2, $3, $4, $5)
+RETURNING session_id, user_id, ip_address, user_agent, created_at, expires_at, revoked_at
+`
+
+type CreateUserSessionParams struct {
+	SessionID uuid.UUID
+	UserID    uuid.UUID
+	CreatedAt time.Time
+	ExpiresAt time.Time
+	IpAddress string
+}
+
+// Session----------------------------------------------------------
+func (q *Queries) CreateUserSession(ctx context.Context, arg CreateUserSessionParams) (UserSession, error) {
+	row := q.db.QueryRowContext(ctx, createUserSession,
+		arg.SessionID,
+		arg.UserID,
+		arg.CreatedAt,
+		arg.ExpiresAt,
+		arg.IpAddress,
+	)
+	var i UserSession
+	err := row.Scan(
+		&i.SessionID,
+		&i.UserID,
+		&i.IpAddress,
+		&i.UserAgent,
+		&i.CreatedAt,
+		&i.ExpiresAt,
+		&i.RevokedAt,
+	)
+	return i, err
+}
+
 const deleteUserOTPByUserId = `-- name: DeleteUserOTPByUserId :exec
-DELETE FROM user_otps WHERE user_id=$1
+DELETE FROM user_otps
+WHERE user_id=$1
 `
 
 func (q *Queries) DeleteUserOTPByUserId(ctx context.Context, userID uuid.UUID) error {
@@ -140,8 +206,19 @@ func (q *Queries) DeleteUserOTPByUserId(ctx context.Context, userID uuid.UUID) e
 	return err
 }
 
+const deleteUserSession = `-- name: DeleteUserSession :exec
+DELETE FROM user_sessions
+WHERE session_id=$1
+`
+
+func (q *Queries) DeleteUserSession(ctx context.Context, sessionID uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteUserSession, sessionID)
+	return err
+}
+
 const getAllUsers = `-- name: GetAllUsers :many
-SELECT id, name, username, email, password, mobile, role, is_active, created_at, updated_at, deleted_at FROM users
+SELECT id, name, username, email, password, mobile, role, is_active, max_sessions, created_at, updated_at, deleted_at
+FROM users
 `
 
 func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
@@ -162,6 +239,7 @@ func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
 			&i.Mobile,
 			&i.Role,
 			&i.IsActive,
+			&i.MaxSessions,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
@@ -180,7 +258,10 @@ func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
 }
 
 const getLatestOTPFromUser = `-- name: GetLatestOTPFromUser :one
-SELECT id, user_id, otp_code, expires_at, is_used, created_at FROM user_otps WHERE user_id=$1 ORDER BY created_at DESC LIMIT 1
+SELECT id, user_id, otp_code, expires_at, is_used, created_at
+FROM user_otps
+WHERE user_id=$1
+ORDER BY created_at DESC LIMIT 1
 `
 
 func (q *Queries) GetLatestOTPFromUser(ctx context.Context, userID uuid.UUID) (UserOtp, error) {
@@ -195,4 +276,162 @@ func (q *Queries) GetLatestOTPFromUser(ctx context.Context, userID uuid.UUID) (U
 		&i.CreatedAt,
 	)
 	return i, err
+}
+
+const getRefreshToken = `-- name: GetRefreshToken :one
+SELECT id, user_id, session_id, token_hash, ip_address, user_agent, created_at, expires_at, revoked_at, replaced_by
+FROM refresh_tokens
+WHERE session_id = $1
+ORDER BY created_at DESC
+LIMIT 1
+`
+
+func (q *Queries) GetRefreshToken(ctx context.Context, sessionID uuid.UUID) (RefreshToken, error) {
+	row := q.db.QueryRowContext(ctx, getRefreshToken, sessionID)
+	var i RefreshToken
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.SessionID,
+		&i.TokenHash,
+		&i.IpAddress,
+		&i.UserAgent,
+		&i.CreatedAt,
+		&i.ExpiresAt,
+		&i.RevokedAt,
+		&i.ReplacedBy,
+	)
+	return i, err
+}
+
+const getUserByEmail = `-- name: GetUserByEmail :one
+SELECT id, name, username, email, password, mobile, role, is_active, max_sessions, created_at, updated_at, deleted_at
+FROM users
+WHERE email=$1
+`
+
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Username,
+		&i.Email,
+		&i.Password,
+		&i.Mobile,
+		&i.Role,
+		&i.IsActive,
+		&i.MaxSessions,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
+const getUserById = `-- name: GetUserById :one
+SELECT id, name, username, email, password, mobile, role, is_active, max_sessions, created_at, updated_at, deleted_at
+FROM users
+WHERE id=$1
+`
+
+func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserById, id)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Username,
+		&i.Email,
+		&i.Password,
+		&i.Mobile,
+		&i.Role,
+		&i.IsActive,
+		&i.MaxSessions,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
+const getUserSessionById = `-- name: GetUserSessionById :one
+SELECT session_id, user_id, ip_address, user_agent, created_at, expires_at, revoked_at
+FROM user_sessions
+WHERE user_id=$1
+ORDER BY created_at DESC LIMIT 1
+`
+
+func (q *Queries) GetUserSessionById(ctx context.Context, userID uuid.UUID) (UserSession, error) {
+	row := q.db.QueryRowContext(ctx, getUserSessionById, userID)
+	var i UserSession
+	err := row.Scan(
+		&i.SessionID,
+		&i.UserID,
+		&i.IpAddress,
+		&i.UserAgent,
+		&i.CreatedAt,
+		&i.ExpiresAt,
+		&i.RevokedAt,
+	)
+	return i, err
+}
+
+const getUserSessionByUserId = `-- name: GetUserSessionByUserId :one
+SELECT session_id, user_id, ip_address, user_agent, created_at, expires_at, revoked_at
+FROM user_sessions
+WHERE session_id=$1
+ORDER BY created_at DESC LIMIT 1
+`
+
+func (q *Queries) GetUserSessionByUserId(ctx context.Context, sessionID uuid.UUID) (UserSession, error) {
+	row := q.db.QueryRowContext(ctx, getUserSessionByUserId, sessionID)
+	var i UserSession
+	err := row.Scan(
+		&i.SessionID,
+		&i.UserID,
+		&i.IpAddress,
+		&i.UserAgent,
+		&i.CreatedAt,
+		&i.ExpiresAt,
+		&i.RevokedAt,
+	)
+	return i, err
+}
+
+const markOTPAsUsed = `-- name: MarkOTPAsUsed :exec
+UPDATE user_otps SET is_used = TRUE WHERE user_id=$1
+`
+
+func (q *Queries) MarkOTPAsUsed(ctx context.Context, userID uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, markOTPAsUsed, userID)
+	return err
+}
+
+const revokeRefreshToken = `-- name: RevokeRefreshToken :exec
+UPDATE refresh_tokens
+SET revoked_at = NOW() 
+WHERE token_hash = $1
+`
+
+func (q *Queries) RevokeRefreshToken(ctx context.Context, tokenHash string) error {
+	_, err := q.db.ExecContext(ctx, revokeRefreshToken, tokenHash)
+	return err
+}
+
+const rotateRefreshToken = `-- name: RotateRefreshToken :exec
+UPDATE refresh_tokens
+SET revoked_at = NOW(), replaced_by = $2
+WHERE id = $1
+`
+
+type RotateRefreshTokenParams struct {
+	ID         uuid.UUID
+	ReplacedBy uuid.NullUUID
+}
+
+func (q *Queries) RotateRefreshToken(ctx context.Context, arg RotateRefreshTokenParams) error {
+	_, err := q.db.ExecContext(ctx, rotateRefreshToken, arg.ID, arg.ReplacedBy)
+	return err
 }

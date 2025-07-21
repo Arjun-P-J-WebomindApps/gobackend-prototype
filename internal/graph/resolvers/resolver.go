@@ -1,6 +1,8 @@
 package resolvers
 
-import "github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/db"
+import (
+	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/db"
+)
 
 // This file will not be regenerated automatically.
 //

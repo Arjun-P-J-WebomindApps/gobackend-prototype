@@ -1,0 +1,24 @@
+scalar UUID
+scalar Time
+
+type Query {
+  getUserById(id: UUID!): User
+  getAllUsers: [User!]!
+  getLatestOTP(userId: UUID!): UserOTP
+  getSessionByUserId(userId: UUID!): UserSession
+  getSessionStatus(sessionId:UUID!):SessionStatus
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+  createUserOTP(input: CreateUserOTPInput!): UserOTP!
+  createUserSession(input: CreateUserSessionInput!): UserSession!
+  createRefreshToken(input: CreateRefreshTokenInput!): RefreshToken!
+  revokeRefreshToken(tokenId: UUID!): Boolean!
+
+
+  login(input:LoginInput!):AuthPayload!
+  verifyOTP(input:VerifyOTPInput!):AuthPayload!
+  refreshToken(input:RefreshTokenInput!):AuthPayload!
+  
+}
