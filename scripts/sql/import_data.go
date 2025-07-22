@@ -1,4 +1,4 @@
-package main
+package sql
 
 import (
 	"encoding/csv"
@@ -283,7 +283,7 @@ func Products() {
 	UploadData("products", createProductPart)
 }
 
-func main() {
+func ImportData() {
 	Auth()
 	Products()
 }
