@@ -1,3 +1,6 @@
+scalar UUID
+scalar Time
+
 type Query {
   #--Auth Queries------------------------------------------------
   getUserById(id: UUID!): User
@@ -5,4 +8,9 @@ type Query {
   getLatestOTP(userId: UUID!): UserOTP
   getSessionByUserId(userId: UUID!): UserSession
   getSessionStatus(sessionId:UUID!):SessionStatus
+
+  #--Products---------------------
+  
+
+  getCompanyByName(name:String!):Company
 }

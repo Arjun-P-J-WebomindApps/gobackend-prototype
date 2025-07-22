@@ -1114,20 +1114,20 @@ func (ec *executionContext) unmarshalInputCreateModelInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"company_id", "name"}
+	fieldsInOrder := [...]string{"company_name", "name"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "company_id":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("company_id"))
-			data, err := ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+		case "company_name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("company_name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.CompanyID = data
+			it.CompanyName = data
 		case "name":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -1148,20 +1148,20 @@ func (ec *executionContext) unmarshalInputCreateModelVariantInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"model_id", "model_type", "model_image"}
+	fieldsInOrder := [...]string{"model_name", "model_type", "model_image"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "model_id":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("model_id"))
-			data, err := ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+		case "model_name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("model_name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.ModelID = data
+			it.ModelName = data
 		case "model_type":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("model_type"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -1189,41 +1189,41 @@ func (ec *executionContext) unmarshalInputCreateProductPartInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"company_id", "model_id", "brand_id", "category_id", "part_no", "is_active"}
+	fieldsInOrder := [...]string{"company_name", "model_name", "brand_name", "category_name", "part_no", "is_active"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "company_id":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("company_id"))
-			data, err := ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+		case "company_name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("company_name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.CompanyID = data
-		case "model_id":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("model_id"))
-			data, err := ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			it.CompanyName = data
+		case "model_name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("model_name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.ModelID = data
-		case "brand_id":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("brand_id"))
-			data, err := ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			it.ModelName = data
+		case "brand_name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("brand_name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.BrandID = data
-		case "category_id":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("category_id"))
-			data, err := ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			it.BrandName = data
+		case "category_name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("category_name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.CategoryID = data
+			it.CategoryName = data
 		case "part_no":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("part_no"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -1806,6 +1806,13 @@ func (ec *executionContext) marshalNProductPart2ᚖgithubᚗcomᚋArjunᚑPᚑJ�
 		return graphql.Null
 	}
 	return ec._ProductPart(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOCompany2ᚖgithubᚗcomᚋArjunᚑPᚑJᚑWebomindAppsᚋgobackendᚑprototypeᚋinternalᚋdbᚋmodelsᚐCompany(ctx context.Context, sel ast.SelectionSet, v *models.Company) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Company(ctx, sel, v)
 }
 
 // endregion ***************************** type.gotpl *****************************

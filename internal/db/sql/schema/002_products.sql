@@ -14,7 +14,7 @@ CREATE TABLE companies (
 CREATE TABLE models(
     id UUID PRIMARY KEY,
     company_id UUID NOT NULL REFERENCES companies(id),
-    name TEXT NOT NULL
+    name TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE model_variants(
@@ -49,8 +49,8 @@ CREATE TABLE product_parts(
     category_id UUID NOT NULL REFERENCES categories(id),
     part_no TEXT NOT NULL UNIQUE,
     is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- +goose Down

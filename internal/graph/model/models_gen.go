@@ -32,23 +32,23 @@ type CreateCompanyInput struct {
 }
 
 type CreateModelInput struct {
-	CompanyID uuid.UUID `json:"company_id"`
-	Name      string    `json:"name"`
+	CompanyName string `json:"company_name"`
+	Name        string `json:"name"`
 }
 
 type CreateModelVariantInput struct {
-	ModelID    uuid.UUID `json:"model_id"`
-	ModelType  string    `json:"model_type"`
-	ModelImage string    `json:"model_image"`
+	ModelName  string `json:"model_name"`
+	ModelType  string `json:"model_type"`
+	ModelImage string `json:"model_image"`
 }
 
 type CreateProductPartInput struct {
-	CompanyID  uuid.UUID `json:"company_id"`
-	ModelID    uuid.UUID `json:"model_id"`
-	BrandID    uuid.UUID `json:"brand_id"`
-	CategoryID uuid.UUID `json:"category_id"`
-	PartNo     string    `json:"part_no"`
-	IsActive   bool      `json:"is_active"`
+	CompanyName  string `json:"company_name"`
+	ModelName    string `json:"model_name"`
+	BrandName    string `json:"brand_name"`
+	CategoryName string `json:"category_name"`
+	PartNo       string `json:"part_no"`
+	IsActive     bool   `json:"is_active"`
 }
 
 type CreateRefreshTokenInput struct {

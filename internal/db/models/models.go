@@ -49,8 +49,8 @@ type ProductPart struct {
 	CategoryID uuid.UUID
 	PartNo     string
 	IsActive   sql.NullBool
-	CreatedAt  sql.NullTime
-	UpdatedAt  sql.NullTime
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 type RefreshToken struct {

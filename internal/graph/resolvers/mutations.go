@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/db/models"
-	generated1 "github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/graph/generated"
+	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/graph/generated"
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/graph/model"
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/utils"
 	"github.com/google/uuid"
@@ -267,97 +267,150 @@ func (r *mutationResolver) RefreshToken(ctx context.Context, input model.Refresh
 
 // CreateCompany is the resolver for the createCompany field.
 func (r *mutationResolver) CreateCompany(ctx context.Context, input model.CreateCompanyInput) (*models.Company, error) {
-	panic(fmt.Errorf("not implemented: CreateCompany - createCompany"))
+
+	uuid := uuid.New()
+	company, err := r.DB.Queries.CreateCompanies(ctx, models.CreateCompaniesParams{
+		ID:     uuid,
+		Name:   input.Name,
+		Status: input.Status,
+	})
+
+	log.Println("Creating user")
+
+	if err != nil {
+		return nil, fmt.Errorf("couldnt create company : %s", err.Error())
+	}
+
+	return &company, nil
 }
 
 // CreateModel is the resolver for the createModel field.
 func (r *mutationResolver) CreateModel(ctx context.Context, input model.CreateModelInput) (*models.Model, error) {
-	panic(fmt.Errorf("not implemented: CreateModel - createModel"))
+	company, err := r.DB.Queries.GetCompanyByName(ctx, input.CompanyName)
+
+	if err != nil {
+		return nil, fmt.Errorf("invalid company name")
+	}
+
+	uuid := uuid.New()
+
+	model, err := r.DB.Queries.CreateModel(ctx, models.CreateModelParams{
+		ID:        uuid,
+		Name:      input.Name,
+		CompanyID: company.ID,
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("couldn't create model %s", err.Error())
+	}
+
+	return &model, nil
 }
 
 // CreateModelVariant is the resolver for the createModelVariant field.
 func (r *mutationResolver) CreateModelVariant(ctx context.Context, input model.CreateModelVariantInput) (*models.ModelVariant, error) {
-	panic(fmt.Errorf("not implemented: CreateModelVariant - createModelVariant"))
+	model, err := r.DB.Queries.GetModelByName(ctx, input.ModelName)
+
+	if err != nil {
+		return nil, fmt.Errorf("invliad model name %s", err.Error())
+	}
+
+	uuid := uuid.New()
+
+	modelVariant, err := r.DB.Queries.CreateModelVariant(ctx, models.CreateModelVariantParams{
+		ID:         uuid,
+		ModelID:    model.ID,
+		ModelType:  utils.ToNullString(input.ModelType),
+		ModelImage: utils.ToNullString(input.ModelImage),
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("couldnt create model variant %s", err.Error())
+	}
+
+	return &modelVariant, nil
 }
 
 // CreateBrand is the resolver for the createBrand field.
 func (r *mutationResolver) CreateBrand(ctx context.Context, input model.CreateBrandInput) (*models.Brand, error) {
-	panic(fmt.Errorf("not implemented: CreateBrand - createBrand"))
+
+	uuid := uuid.New()
+
+	brand, err := r.DB.Queries.CreateBrand(ctx, models.CreateBrandParams{
+		ID:   uuid,
+		Name: input.Name,
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("brand could not be added %s", err.Error())
+	}
+
+	return &brand, nil
+
 }
 
 // CreateCategory is the resolver for the createCategory field.
 func (r *mutationResolver) CreateCategory(ctx context.Context, input model.CreateCategoryInput) (*models.Category, error) {
-	panic(fmt.Errorf("not implemented: CreateCategory - createCategory"))
+	uuid := uuid.New()
+	category, err := r.DB.Queries.CreateCategories(ctx, models.CreateCategoriesParams{
+		ID:    uuid,
+		Name:  input.Name,
+		Image: utils.ToNullString(input.Image),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("couldnt create category %s", err.Error())
+	}
+
+	return &category, nil
 }
 
 // CreateProductPart is the resolver for the createProductPart field.
 func (r *mutationResolver) CreateProductPart(ctx context.Context, input model.CreateProductPartInput) (*models.ProductPart, error) {
-	panic(fmt.Errorf("not implemented: CreateProductPart - createProductPart"))
-}
+	company, err := r.DB.Queries.GetCompanyByName(ctx, input.CompanyName)
+	if err != nil {
+		return nil, fmt.Errorf("couldnt get company")
+	}
 
-// GetUserByID is the resolver for the getUserById field.
-func (r *queryResolver) GetUserByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
-	panic(fmt.Errorf("not implemented: GetUserByID - getUserById"))
-}
-
-// GetAllUsers is the resolver for the getAllUsers field.
-func (r *queryResolver) GetAllUsers(ctx context.Context) ([]*models.User, error) {
-	users, err := r.DB.Queries.GetAllUsers(ctx)
+	model, err := r.DB.Queries.GetModelByName(ctx, input.ModelName)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch users: %s", err.Error())
+		return nil, fmt.Errorf("couldnt get model")
 	}
 
-	userPtrs := make([]*models.User, 0, len(users))
-
-	for i := range users {
-		user := users[i]
-		userPtrs = append(userPtrs, &user)
-	}
-
-	return userPtrs, nil
-}
-
-// GetLatestOtp is the resolver for the getLatestOTP field.
-func (r *queryResolver) GetLatestOtp(ctx context.Context, userID uuid.UUID) (*models.UserOtp, error) {
-	otp, err := r.DB.Queries.GetLatestOTPFromUser(ctx, userID)
+	brand, err := r.DB.Queries.GetBrandByName(ctx, input.BrandName)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch otp")
+		return nil, fmt.Errorf("couldn't get brand")
 	}
 
-	return &otp, nil
-}
-
-// GetSessionByUserID is the resolver for the getSessionByUserId field.
-func (r *queryResolver) GetSessionByUserID(ctx context.Context, userID uuid.UUID) (*models.UserSession, error) {
-	session, err := r.DB.Queries.GetUserSessionByUserId(ctx, userID)
+	category, err := r.DB.Queries.GetCategoriesByName(ctx, input.CategoryName)
 
 	if err != nil {
-		return nil, fmt.Errorf("faailed to get session %s", err.Error())
+		return nil, fmt.Errorf("couldnt get category")
 	}
 
-	return &session, nil
-}
+	uuid := uuid.New()
 
-// GetSessionStatus is the resolver for the getSessionStatus field.
-func (r *queryResolver) GetSessionStatus(ctx context.Context, sessionID uuid.UUID) (*model.SessionStatus, error) {
-	session, err := r.DB.Queries.GetUserSessionById(ctx, sessionID)
+	productPart, err := r.DB.Queries.CreateProductParts(ctx, models.CreateProductPartsParams{
+		ID:         uuid,
+		CompanyID:  company.ID,
+		ModelID:    model.ID,
+		BrandID:    brand.ID,
+		PartNo:     input.PartNo,
+		IsActive:   sql.NullBool{Bool: input.IsActive, Valid: true},
+		CategoryID: category.ID,
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
+	})
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to get session %s", err.Error())
+		return nil, fmt.Errorf("couldnt create new part %s", err.Error())
 	}
 
-	return &model.SessionStatus{
-		Valid: session.RevokedAt.Valid,
-	}, nil
+	return &productPart, nil
 }
 
-// Mutation returns generated1.MutationResolver implementation.
-func (r *Resolver) Mutation() generated1.MutationResolver { return &mutationResolver{r} }
-
-// Query returns generated1.QueryResolver implementation.
-func (r *Resolver) Query() generated1.QueryResolver { return &queryResolver{r} }
+// Mutation returns generated.MutationResolver implementation.
+func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
 type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }

@@ -22,7 +22,7 @@ type Model{
 }
 
 input CreateModelInput {
-    company_id:UUID!
+    company_name:String!
     name:String!
 }
 
@@ -35,7 +35,7 @@ type ModelVariant{
 }
 
 input CreateModelVariantInput{
-    model_id:UUID!
+    model_name:String!
     model_type:String!
     model_image:String!
 }
@@ -79,10 +79,10 @@ type ProductPart{
 }
 
 input CreateProductPartInput{
-    company_id:UUID!
-    model_id:UUID!
-    brand_id:UUID!
-    category_id:UUID!
+    company_name:String!
+    model_name:String!
+    brand_name:String!
+    category_name:String!
     part_no:String!
     is_active:Boolean!
 }

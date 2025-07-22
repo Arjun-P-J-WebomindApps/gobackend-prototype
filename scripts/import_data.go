@@ -31,12 +31,12 @@ type CompanyInput struct {
 }
 
 type ModelInput struct {
-	CompanyID string `json:"company_id"`
-	Name      string `json:"name"`
+	CompanyName string `json:"company_name"`
+	Name        string `json:"name"`
 }
 
 type ModelVariantInput struct {
-	ModelId    string `json:"model_id"`
+	ModelName  string `json:"model_name"`
 	ModelType  string `json:"model_type"`
 	ModelImage string `json:"model_image"`
 }
@@ -51,12 +51,12 @@ type CategoryInput struct {
 }
 
 type ProductPartInput struct {
-	CompanyId  string `json:"company_id"`
-	ModelId    string `json:"model_id"`
-	BrandId    string `json:"brand_id"`
-	CategoryId string `json:"category_id"`
-	PartNo     string `json:"part_no"`
-	IsActive   bool   `json:"is_active"`
+	CompanyName  string `json:"company_name"`
+	ModelName    string `json:"model_name"`
+	BrandName    string `json:"brand_name"`
+	CategoryName string `json:"category_name"`
+	PartNo       string `json:"part_no"`
+	IsActive     bool   `json:"is_active"`
 }
 
 type Variables[T any] struct {
@@ -99,7 +99,8 @@ func extractExcelData(path string) [][]string {
 				break
 			}
 
-			log.Fatal("Record extraction error")
+			log.Println("Record extraction error")
+			continue
 		}
 		table = append(table, record)
 	}
@@ -198,8 +199,91 @@ func Products() {
 	}
 
 	UploadData("company_master", createCompany)
+
+	createModel := func(p []string) GraphQlRequest[ModelInput] {
+		model := GraphQlRequest[ModelInput]{
+			Query: "mutation CreateModel($input: CreateModelInput!) { createModel(input: $input) { id company_id name } }",
+			Variables: Variables[ModelInput]{
+				Input: ModelInput{
+					Name:        p[1],
+					CompanyName: p[3],
+				},
+			},
+		}
+		return model
+	}
+
+	UploadData("model_master", createModel)
+
+	createModelVaraint := func(p []string) GraphQlRequest[ModelVariantInput] {
+		modelVariant := GraphQlRequest[ModelVariantInput]{
+			Query: "mutation CreateModelVariant($input: CreateModelVariantInput!) { createModelVariant(input: $input) { id model_id model_type model_image } }",
+			Variables: Variables[ModelVariantInput]{
+				Input: ModelVariantInput{
+					ModelName:  p[1],
+					ModelType:  p[4],
+					ModelImage: p[5],
+				},
+			},
+		}
+
+		return modelVariant
+	}
+
+	UploadData("model_master", createModelVaraint)
+
+	createBrand := func(p []string) GraphQlRequest[BrandInput] {
+		brand := GraphQlRequest[BrandInput]{
+			Query: "mutation CreateBrand($input: CreateBrandInput!) { createBrand(input: $input) { id name } }",
+			Variables: Variables[BrandInput]{
+				Input: BrandInput{
+					Name: p[1],
+				},
+			},
+		}
+
+		return brand
+	}
+
+	UploadData("brand_master", createBrand)
+
+	createCategory := func(p []string) GraphQlRequest[CategoryInput] {
+		category := GraphQlRequest[CategoryInput]{
+			Query: "mutation CreateCategory($input: CreateCategoryInput!) { createCategory(input: $input) { id name image } }",
+			Variables: Variables[CategoryInput]{
+				Input: CategoryInput{
+					Name:  p[1],
+					Image: p[8],
+				},
+			},
+		}
+		return category
+	}
+
+	UploadData("category_master", createCategory)
+
+	createProductPart := func(p []string) GraphQlRequest[ProductPartInput] {
+		productPart := GraphQlRequest[ProductPartInput]{
+			Query: "mutation CreateProductPart($input: CreateProductPartInput!) { createProductPart(input: $input) { id company_id model_id brand_id category_id part_no is_active } }",
+			Variables: Variables[ProductPartInput]{
+				Input: ProductPartInput{
+					CompanyName:  p[1],
+					ModelName:    p[2],
+					BrandName:    p[3],
+					CategoryName: p[4],
+					PartNo:       p[5],
+					IsActive:     extractInt(p[34]) == 1,
+				},
+			},
+		}
+
+		return productPart
+	}
+
+	UploadData("products", createProductPart)
 }
 
 func main() {
 	Auth()
+	Products()
 }

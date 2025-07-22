@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -133,8 +134,8 @@ type CreateProductPartsParams struct {
 	CategoryID uuid.UUID
 	PartNo     string
 	IsActive   sql.NullBool
-	CreatedAt  sql.NullTime
-	UpdatedAt  sql.NullTime
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 // Products ----------------------------------------------------------------

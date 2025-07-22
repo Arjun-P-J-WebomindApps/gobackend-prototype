@@ -116,6 +116,7 @@ type ComplexityRoot struct {
 
 	Query struct {
 		GetAllUsers        func(childComplexity int) int
+		GetCompanyByName   func(childComplexity int, name string) int
 		GetLatestOtp       func(childComplexity int, userID uuid.UUID) int
 		GetSessionByUserID func(childComplexity int, userID uuid.UUID) int
 		GetSessionStatus   func(childComplexity int, sessionID uuid.UUID) int
@@ -556,6 +557,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.GetAllUsers(childComplexity), true
+
+	case "Query.getCompanyByName":
+		if e.complexity.Query.GetCompanyByName == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getCompanyByName_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetCompanyByName(childComplexity, args["name"].(string)), true
 
 	case "Query.getLatestOTP":
 		if e.complexity.Query.GetLatestOtp == nil {
@@ -1105,6 +1118,32 @@ type SessionStatus {
   user: User
 }
 `, BuiltIn: false},
+	{Name: "../schema/mutations.graphqls", Input: `type Mutation {
+  # ---Auth Mutations---------------------------------------------------
+
+    #Internal
+    createUser(input: CreateUserInput!): User!
+    createUserOTP(input: CreateUserOTPInput!): UserOTP!
+    createUserSession(input: CreateUserSessionInput!): UserSession!
+    createRefreshToken(input: CreateRefreshTokenInput!): RefreshToken!
+    revokeRefreshToken(tokenId: UUID!): Boolean!
+
+    # Outside
+    login(input:LoginInput!):AuthPayload!
+    verifyOTP(input:VerifyOTPInput!):AuthPayload!
+    refreshToken(input:RefreshTokenInput!):AuthPayload!
+  
+
+  #--Products------------------------------------------------------------------
+
+  createCompany(input:CreateCompanyInput!):Company!
+  createModel(input:CreateModelInput!):Model!
+  createModelVariant(input:CreateModelVariantInput!):ModelVariant!
+  createBrand(input:CreateBrandInput!):Brand!
+  createCategory(input:CreateCategoryInput!):Category!
+  createProductPart(input:CreateProductPartInput!):ProductPart!
+
+}`, BuiltIn: false},
 	{Name: "../schema/products.graphqls", Input: `
 #--Companies----------------------------------------------------
 
@@ -1129,7 +1168,7 @@ type Model{
 }
 
 input CreateModelInput {
-    company_id:UUID!
+    company_name:String!
     name:String!
 }
 
@@ -1142,7 +1181,7 @@ type ModelVariant{
 }
 
 input CreateModelVariantInput{
-    model_id:UUID!
+    model_name:String!
     model_type:String!
     model_image:String!
 }
@@ -1186,14 +1225,14 @@ type ProductPart{
 }
 
 input CreateProductPartInput{
-    company_id:UUID!
-    model_id:UUID!
-    brand_id:UUID!
-    category_id:UUID!
+    company_name:String!
+    model_name:String!
+    brand_name:String!
+    category_name:String!
     part_no:String!
     is_active:Boolean!
 }`, BuiltIn: false},
-	{Name: "../schema/schema.graphqls", Input: `scalar UUID
+	{Name: "../schema/queries.graphqls", Input: `scalar UUID
 scalar Time
 
 type Query {
@@ -1203,34 +1242,11 @@ type Query {
   getLatestOTP(userId: UUID!): UserOTP
   getSessionByUserId(userId: UUID!): UserSession
   getSessionStatus(sessionId:UUID!):SessionStatus
-}
 
-type Mutation {
-  # ---Auth Mutations---------------------------------------------------
-
-    #Internal
-    createUser(input: CreateUserInput!): User!
-    createUserOTP(input: CreateUserOTPInput!): UserOTP!
-    createUserSession(input: CreateUserSessionInput!): UserSession!
-    createRefreshToken(input: CreateRefreshTokenInput!): RefreshToken!
-    revokeRefreshToken(tokenId: UUID!): Boolean!
-
-    # Outside
-    login(input:LoginInput!):AuthPayload!
-    verifyOTP(input:VerifyOTPInput!):AuthPayload!
-    refreshToken(input:RefreshTokenInput!):AuthPayload!
+  #--Products---------------------
   
 
-  #--Products------------------------------------------------------------------
-
-  createCompany(input:CreateCompanyInput!):Company!
-  createModel(input:CreateModelInput!):Model!
-  createModelVariant(input:CreateModelVariantInput!):ModelVariant!
-  createBrand(input:CreateBrandInput!):Brand!
-  createCategory(input:CreateCategoryInput!):Category!
-  createProductPart(input:CreateProductPartInput!):ProductPart!
-
-}
-`, BuiltIn: false},
+  getCompanyByName(name:String!):Company
+}`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
