@@ -11,6 +11,48 @@ import (
 	"github.com/google/uuid"
 )
 
+type Brand struct {
+	ID   uuid.UUID
+	Name string
+}
+
+type Category struct {
+	ID    uuid.UUID
+	Name  string
+	Image sql.NullString
+}
+
+type Company struct {
+	ID     uuid.UUID
+	Name   string
+	Status bool
+}
+
+type Model struct {
+	ID        uuid.UUID
+	CompanyID uuid.UUID
+	Name      string
+}
+
+type ModelVariant struct {
+	ID         uuid.UUID
+	ModelID    uuid.UUID
+	ModelType  sql.NullString
+	ModelImage sql.NullString
+}
+
+type ProductPart struct {
+	ID         uuid.UUID
+	CompanyID  uuid.UUID
+	ModelID    uuid.UUID
+	BrandID    uuid.UUID
+	CategoryID uuid.UUID
+	PartNo     string
+	IsActive   sql.NullBool
+	CreatedAt  sql.NullTime
+	UpdatedAt  sql.NullTime
+}
+
 type RefreshToken struct {
 	ID         uuid.UUID
 	UserID     uuid.UUID

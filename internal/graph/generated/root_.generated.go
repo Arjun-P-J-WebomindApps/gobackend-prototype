@@ -34,7 +34,10 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Category() CategoryResolver
+	ModelVariant() ModelVariantResolver
 	Mutation() MutationResolver
+	ProductPart() ProductPartResolver
 	Query() QueryResolver
 	RefreshToken() RefreshTokenResolver
 	User() UserResolver
@@ -54,7 +57,43 @@ type ComplexityRoot struct {
 		UserID       func(childComplexity int) int
 	}
 
+	Brand struct {
+		ID   func(childComplexity int) int
+		Name func(childComplexity int) int
+	}
+
+	Category struct {
+		ID    func(childComplexity int) int
+		Image func(childComplexity int) int
+		Name  func(childComplexity int) int
+	}
+
+	Company struct {
+		ID     func(childComplexity int) int
+		Name   func(childComplexity int) int
+		Status func(childComplexity int) int
+	}
+
+	Model struct {
+		CompanyID func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Name      func(childComplexity int) int
+	}
+
+	ModelVariant struct {
+		ID         func(childComplexity int) int
+		ModelID    func(childComplexity int) int
+		ModelImage func(childComplexity int) int
+		ModelType  func(childComplexity int) int
+	}
+
 	Mutation struct {
+		CreateBrand        func(childComplexity int, input model.CreateBrandInput) int
+		CreateCategory     func(childComplexity int, input model.CreateCategoryInput) int
+		CreateCompany      func(childComplexity int, input model.CreateCompanyInput) int
+		CreateModel        func(childComplexity int, input model.CreateModelInput) int
+		CreateModelVariant func(childComplexity int, input model.CreateModelVariantInput) int
+		CreateProductPart  func(childComplexity int, input model.CreateProductPartInput) int
 		CreateRefreshToken func(childComplexity int, input model.CreateRefreshTokenInput) int
 		CreateUser         func(childComplexity int, input model.CreateUserInput) int
 		CreateUserOtp      func(childComplexity int, input model.CreateUserOTPInput) int
@@ -63,6 +102,16 @@ type ComplexityRoot struct {
 		RefreshToken       func(childComplexity int, input model.RefreshTokenInput) int
 		RevokeRefreshToken func(childComplexity int, tokenID uuid.UUID) int
 		VerifyOtp          func(childComplexity int, input model.VerifyOTPInput) int
+	}
+
+	ProductPart struct {
+		BrandID    func(childComplexity int) int
+		CategoryID func(childComplexity int) int
+		CompanyID  func(childComplexity int) int
+		ID         func(childComplexity int) int
+		IsActive   func(childComplexity int) int
+		ModelID    func(childComplexity int) int
+		PartNo     func(childComplexity int) int
 	}
 
 	Query struct {
@@ -179,6 +228,183 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.AuthPayload.UserID(childComplexity), true
 
+	case "Brand.id":
+		if e.complexity.Brand.ID == nil {
+			break
+		}
+
+		return e.complexity.Brand.ID(childComplexity), true
+
+	case "Brand.name":
+		if e.complexity.Brand.Name == nil {
+			break
+		}
+
+		return e.complexity.Brand.Name(childComplexity), true
+
+	case "Category.id":
+		if e.complexity.Category.ID == nil {
+			break
+		}
+
+		return e.complexity.Category.ID(childComplexity), true
+
+	case "Category.image":
+		if e.complexity.Category.Image == nil {
+			break
+		}
+
+		return e.complexity.Category.Image(childComplexity), true
+
+	case "Category.name":
+		if e.complexity.Category.Name == nil {
+			break
+		}
+
+		return e.complexity.Category.Name(childComplexity), true
+
+	case "Company.id":
+		if e.complexity.Company.ID == nil {
+			break
+		}
+
+		return e.complexity.Company.ID(childComplexity), true
+
+	case "Company.name":
+		if e.complexity.Company.Name == nil {
+			break
+		}
+
+		return e.complexity.Company.Name(childComplexity), true
+
+	case "Company.status":
+		if e.complexity.Company.Status == nil {
+			break
+		}
+
+		return e.complexity.Company.Status(childComplexity), true
+
+	case "Model.company_id":
+		if e.complexity.Model.CompanyID == nil {
+			break
+		}
+
+		return e.complexity.Model.CompanyID(childComplexity), true
+
+	case "Model.id":
+		if e.complexity.Model.ID == nil {
+			break
+		}
+
+		return e.complexity.Model.ID(childComplexity), true
+
+	case "Model.name":
+		if e.complexity.Model.Name == nil {
+			break
+		}
+
+		return e.complexity.Model.Name(childComplexity), true
+
+	case "ModelVariant.id":
+		if e.complexity.ModelVariant.ID == nil {
+			break
+		}
+
+		return e.complexity.ModelVariant.ID(childComplexity), true
+
+	case "ModelVariant.model_id":
+		if e.complexity.ModelVariant.ModelID == nil {
+			break
+		}
+
+		return e.complexity.ModelVariant.ModelID(childComplexity), true
+
+	case "ModelVariant.model_image":
+		if e.complexity.ModelVariant.ModelImage == nil {
+			break
+		}
+
+		return e.complexity.ModelVariant.ModelImage(childComplexity), true
+
+	case "ModelVariant.model_type":
+		if e.complexity.ModelVariant.ModelType == nil {
+			break
+		}
+
+		return e.complexity.ModelVariant.ModelType(childComplexity), true
+
+	case "Mutation.createBrand":
+		if e.complexity.Mutation.CreateBrand == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createBrand_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateBrand(childComplexity, args["input"].(model.CreateBrandInput)), true
+
+	case "Mutation.createCategory":
+		if e.complexity.Mutation.CreateCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createCategory_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateCategory(childComplexity, args["input"].(model.CreateCategoryInput)), true
+
+	case "Mutation.createCompany":
+		if e.complexity.Mutation.CreateCompany == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createCompany_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateCompany(childComplexity, args["input"].(model.CreateCompanyInput)), true
+
+	case "Mutation.createModel":
+		if e.complexity.Mutation.CreateModel == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createModel_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateModel(childComplexity, args["input"].(model.CreateModelInput)), true
+
+	case "Mutation.createModelVariant":
+		if e.complexity.Mutation.CreateModelVariant == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createModelVariant_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateModelVariant(childComplexity, args["input"].(model.CreateModelVariantInput)), true
+
+	case "Mutation.createProductPart":
+		if e.complexity.Mutation.CreateProductPart == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createProductPart_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateProductPart(childComplexity, args["input"].(model.CreateProductPartInput)), true
+
 	case "Mutation.createRefreshToken":
 		if e.complexity.Mutation.CreateRefreshToken == nil {
 			break
@@ -274,6 +500,55 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.VerifyOtp(childComplexity, args["input"].(model.VerifyOTPInput)), true
+
+	case "ProductPart.brand_id":
+		if e.complexity.ProductPart.BrandID == nil {
+			break
+		}
+
+		return e.complexity.ProductPart.BrandID(childComplexity), true
+
+	case "ProductPart.category_id":
+		if e.complexity.ProductPart.CategoryID == nil {
+			break
+		}
+
+		return e.complexity.ProductPart.CategoryID(childComplexity), true
+
+	case "ProductPart.company_id":
+		if e.complexity.ProductPart.CompanyID == nil {
+			break
+		}
+
+		return e.complexity.ProductPart.CompanyID(childComplexity), true
+
+	case "ProductPart.id":
+		if e.complexity.ProductPart.ID == nil {
+			break
+		}
+
+		return e.complexity.ProductPart.ID(childComplexity), true
+
+	case "ProductPart.is_active":
+		if e.complexity.ProductPart.IsActive == nil {
+			break
+		}
+
+		return e.complexity.ProductPart.IsActive(childComplexity), true
+
+	case "ProductPart.model_id":
+		if e.complexity.ProductPart.ModelID == nil {
+			break
+		}
+
+		return e.complexity.ProductPart.ModelID(childComplexity), true
+
+	case "ProductPart.part_no":
+		if e.complexity.ProductPart.PartNo == nil {
+			break
+		}
+
+		return e.complexity.ProductPart.PartNo(childComplexity), true
 
 	case "Query.getAllUsers":
 		if e.complexity.Query.GetAllUsers == nil {
@@ -590,6 +865,12 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	opCtx := graphql.GetOperationContext(ctx)
 	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputCreateBrandInput,
+		ec.unmarshalInputCreateCategoryInput,
+		ec.unmarshalInputCreateCompanyInput,
+		ec.unmarshalInputCreateModelInput,
+		ec.unmarshalInputCreateModelVariantInput,
+		ec.unmarshalInputCreateProductPartInput,
 		ec.unmarshalInputCreateRefreshTokenInput,
 		ec.unmarshalInputCreateUserInput,
 		ec.unmarshalInputCreateUserOTPInput,
@@ -824,10 +1105,99 @@ type SessionStatus {
   user: User
 }
 `, BuiltIn: false},
+	{Name: "../schema/products.graphqls", Input: `
+#--Companies----------------------------------------------------
+
+type Company{
+    id:UUID!
+    name:String!
+    status:Boolean!
+}
+
+input CreateCompanyInput{
+    name: String!
+    status: Boolean!
+}
+
+
+#--Model------------------------------------------------------------
+
+type Model{
+    id:UUID!
+    company_id:UUID!
+    name:String!
+}
+
+input CreateModelInput {
+    company_id:UUID!
+    name:String!
+}
+
+
+type ModelVariant{
+    id:UUID!
+    model_id:UUID!
+    model_type:String!
+    model_image:String!
+}
+
+input CreateModelVariantInput{
+    model_id:UUID!
+    model_type:String!
+    model_image:String!
+}
+
+#--Brands-----------------------
+
+type Brand{
+    id:UUID!
+    name:String!
+}
+
+
+input CreateBrandInput{
+    name:String!
+}
+
+
+#---Categories--------------------------
+
+type Category{
+    id:UUID!
+    name:String!
+    image:String!
+}
+
+input CreateCategoryInput{
+    name: String!
+    image: String!
+}
+
+#--ProductParts----------------------------------
+
+type ProductPart{
+    id:UUID!
+    company_id:UUID!
+    model_id:UUID!
+    brand_id:UUID!
+    category_id:UUID!
+    part_no:String!
+    is_active:Boolean!
+}
+
+input CreateProductPartInput{
+    company_id:UUID!
+    model_id:UUID!
+    brand_id:UUID!
+    category_id:UUID!
+    part_no:String!
+    is_active:Boolean!
+}`, BuiltIn: false},
 	{Name: "../schema/schema.graphqls", Input: `scalar UUID
 scalar Time
 
 type Query {
+  #--Auth Queries------------------------------------------------
   getUserById(id: UUID!): User
   getAllUsers: [User!]!
   getLatestOTP(userId: UUID!): UserOTP
@@ -836,17 +1206,30 @@ type Query {
 }
 
 type Mutation {
-  createUser(input: CreateUserInput!): User!
-  createUserOTP(input: CreateUserOTPInput!): UserOTP!
-  createUserSession(input: CreateUserSessionInput!): UserSession!
-  createRefreshToken(input: CreateRefreshTokenInput!): RefreshToken!
-  revokeRefreshToken(tokenId: UUID!): Boolean!
+  # ---Auth Mutations---------------------------------------------------
 
+    #Internal
+    createUser(input: CreateUserInput!): User!
+    createUserOTP(input: CreateUserOTPInput!): UserOTP!
+    createUserSession(input: CreateUserSessionInput!): UserSession!
+    createRefreshToken(input: CreateRefreshTokenInput!): RefreshToken!
+    revokeRefreshToken(tokenId: UUID!): Boolean!
 
-  login(input:LoginInput!):AuthPayload!
-  verifyOTP(input:VerifyOTPInput!):AuthPayload!
-  refreshToken(input:RefreshTokenInput!):AuthPayload!
+    # Outside
+    login(input:LoginInput!):AuthPayload!
+    verifyOTP(input:VerifyOTPInput!):AuthPayload!
+    refreshToken(input:RefreshTokenInput!):AuthPayload!
   
+
+  #--Products------------------------------------------------------------------
+
+  createCompany(input:CreateCompanyInput!):Company!
+  createModel(input:CreateModelInput!):Model!
+  createModelVariant(input:CreateModelVariantInput!):ModelVariant!
+  createBrand(input:CreateBrandInput!):Brand!
+  createCategory(input:CreateCategoryInput!):Category!
+  createProductPart(input:CreateProductPartInput!):ProductPart!
+
 }
 `, BuiltIn: false},
 }

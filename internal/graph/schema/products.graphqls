@@ -1,0 +1,88 @@
+
+#--Companies----------------------------------------------------
+
+type Company{
+    id:UUID!
+    name:String!
+    status:Boolean!
+}
+
+input CreateCompanyInput{
+    name: String!
+    status: Boolean!
+}
+
+
+#--Model------------------------------------------------------------
+
+type Model{
+    id:UUID!
+    company_id:UUID!
+    name:String!
+}
+
+input CreateModelInput {
+    company_id:UUID!
+    name:String!
+}
+
+
+type ModelVariant{
+    id:UUID!
+    model_id:UUID!
+    model_type:String!
+    model_image:String!
+}
+
+input CreateModelVariantInput{
+    model_id:UUID!
+    model_type:String!
+    model_image:String!
+}
+
+#--Brands-----------------------
+
+type Brand{
+    id:UUID!
+    name:String!
+}
+
+
+input CreateBrandInput{
+    name:String!
+}
+
+
+#---Categories--------------------------
+
+type Category{
+    id:UUID!
+    name:String!
+    image:String!
+}
+
+input CreateCategoryInput{
+    name: String!
+    image: String!
+}
+
+#--ProductParts----------------------------------
+
+type ProductPart{
+    id:UUID!
+    company_id:UUID!
+    model_id:UUID!
+    brand_id:UUID!
+    category_id:UUID!
+    part_no:String!
+    is_active:Boolean!
+}
+
+input CreateProductPartInput{
+    company_id:UUID!
+    model_id:UUID!
+    brand_id:UUID!
+    category_id:UUID!
+    part_no:String!
+    is_active:Boolean!
+}

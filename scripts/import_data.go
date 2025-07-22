@@ -15,7 +15,7 @@ import (
 	"sync"
 )
 
-type Input struct {
+type UserInput struct {
 	Name     string `json:"name"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
@@ -25,13 +25,47 @@ type Input struct {
 	IsActive bool   `json:"isActive"`
 }
 
-type Variables struct {
-	Input Input `json:"input"`
+type CompanyInput struct {
+	Name   string `json:"name"`
+	Status bool   `json:"status"`
 }
 
-type GraphQlRequest struct {
-	Query     string    `json:"query"`
-	Variables Variables `json:"variables"`
+type ModelInput struct {
+	CompanyID string `json:"company_id"`
+	Name      string `json:"name"`
+}
+
+type ModelVariantInput struct {
+	ModelId    string `json:"model_id"`
+	ModelType  string `json:"model_type"`
+	ModelImage string `json:"model_image"`
+}
+
+type BrandInput struct {
+	Name string `json:"name"`
+}
+
+type CategoryInput struct {
+	Name  string `json:"name"`
+	Image string `json:"image"`
+}
+
+type ProductPartInput struct {
+	CompanyId  string `json:"company_id"`
+	ModelId    string `json:"model_id"`
+	BrandId    string `json:"brand_id"`
+	CategoryId string `json:"category_id"`
+	PartNo     string `json:"part_no"`
+	IsActive   bool   `json:"is_active"`
+}
+
+type Variables[T any] struct {
+	Input T `json:"input"`
+}
+
+type GraphQlRequest[T any] struct {
+	Query     string       `json:"query"`
+	Variables Variables[T] `json:"variables"`
 }
 
 func extractInt(data string) int {
@@ -98,7 +132,7 @@ func replaceWithNameIfEmpty(username string, fallback string) string {
 
 }
 
-func UploadData(filename string, graphqlReq func(p []string) GraphQlRequest) {
+func UploadData[T any](filename string, graphqlReq func(p []string) GraphQlRequest[T]) {
 	var wg sync.WaitGroup
 	url := "http://localhost:8000/query"
 
@@ -126,12 +160,12 @@ func UploadData(filename string, graphqlReq func(p []string) GraphQlRequest) {
 	wg.Wait()
 }
 
-func main() {
-	createUsers := func(p []string) GraphQlRequest {
-		user := GraphQlRequest{
+func Auth() {
+	createUsers := func(p []string) GraphQlRequest[UserInput] {
+		user := GraphQlRequest[UserInput]{
 			Query: "mutation CreateUser($input:CreateUserInput!) {createUser(input:$input) { name username email password mobile role isActive }}",
-			Variables: Variables{
-				Input: Input{
+			Variables: Variables[UserInput]{
+				Input: UserInput{
 					Name:     p[1],
 					Username: replaceWithNameIfEmpty("", p[1]),
 					Email:    p[5],
@@ -146,4 +180,26 @@ func main() {
 	}
 
 	UploadData("muser_master", createUsers)
+}
+
+func Products() {
+	createCompany := func(p []string) GraphQlRequest[CompanyInput] {
+		company := GraphQlRequest[CompanyInput]{
+			Query: "mutation CreateCompany($input: CreateCompanyInput!) { createCompany(input: $input) { id name status } }",
+			Variables: Variables[CompanyInput]{
+				Input: CompanyInput{
+					Name:   p[1],
+					Status: extractInt(p[2]) == 1,
+				},
+			},
+		}
+
+		return company
+	}
+
+	UploadData("company_master", createCompany)
+}
+
+func main() {
+	Auth()
 }

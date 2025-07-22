@@ -7,6 +7,7 @@ import (
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/app_context"
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/db"
 	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/routers"
+	"github.com/Arjun-P-J-WebomindApps/gobackend-prototype/internal/search"
 )
 
 var AppContext *app_context.Context
@@ -17,6 +18,7 @@ func Setup() {
 	AppContext = &app_context.Context{}
 
 	setupDatabase()
+	startSearchEngine()
 	startServer()
 }
 
@@ -43,6 +45,15 @@ func setupDatabase() {
 		),
 	}
 	fmt.Printf("Database running on %s", GetEnv("DB_HOST", "localhost"))
+}
+
+func startSearchEngine() {
+	AppContext.Search = &search.TypesenseContext{
+		SearchContext: search.ConnectTypesense(
+			GetEnv("TYPESENSE_URL", "http://localhost:8108/"),
+			GetEnv("TYPESENSE_API", "xyz"),
+		),
+	}
 }
 
 // Defines and start the router

@@ -1,0 +1,8 @@
+type Query {
+  #--Auth Queries------------------------------------------------
+  getUserById(id: UUID!): User
+  getAllUsers: [User!]!
+  getLatestOTP(userId: UUID!): UserOTP
+  getSessionByUserId(userId: UUID!): UserSession
+  getSessionStatus(sessionId:UUID!):SessionStatus
+}

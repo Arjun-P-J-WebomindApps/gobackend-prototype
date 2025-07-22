@@ -265,6 +265,36 @@ func (r *mutationResolver) RefreshToken(ctx context.Context, input model.Refresh
 	}, nil
 }
 
+// CreateCompany is the resolver for the createCompany field.
+func (r *mutationResolver) CreateCompany(ctx context.Context, input model.CreateCompanyInput) (*models.Company, error) {
+	panic(fmt.Errorf("not implemented: CreateCompany - createCompany"))
+}
+
+// CreateModel is the resolver for the createModel field.
+func (r *mutationResolver) CreateModel(ctx context.Context, input model.CreateModelInput) (*models.Model, error) {
+	panic(fmt.Errorf("not implemented: CreateModel - createModel"))
+}
+
+// CreateModelVariant is the resolver for the createModelVariant field.
+func (r *mutationResolver) CreateModelVariant(ctx context.Context, input model.CreateModelVariantInput) (*models.ModelVariant, error) {
+	panic(fmt.Errorf("not implemented: CreateModelVariant - createModelVariant"))
+}
+
+// CreateBrand is the resolver for the createBrand field.
+func (r *mutationResolver) CreateBrand(ctx context.Context, input model.CreateBrandInput) (*models.Brand, error) {
+	panic(fmt.Errorf("not implemented: CreateBrand - createBrand"))
+}
+
+// CreateCategory is the resolver for the createCategory field.
+func (r *mutationResolver) CreateCategory(ctx context.Context, input model.CreateCategoryInput) (*models.Category, error) {
+	panic(fmt.Errorf("not implemented: CreateCategory - createCategory"))
+}
+
+// CreateProductPart is the resolver for the createProductPart field.
+func (r *mutationResolver) CreateProductPart(ctx context.Context, input model.CreateProductPartInput) (*models.ProductPart, error) {
+	panic(fmt.Errorf("not implemented: CreateProductPart - createProductPart"))
+}
+
 // GetUserByID is the resolver for the getUserById field.
 func (r *queryResolver) GetUserByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
 	panic(fmt.Errorf("not implemented: GetUserByID - getUserById"))

@@ -17,6 +17,40 @@ type AuthPayload struct {
 	UserID       *string      `json:"userId,omitempty"`
 }
 
+type CreateBrandInput struct {
+	Name string `json:"name"`
+}
+
+type CreateCategoryInput struct {
+	Name  string `json:"name"`
+	Image string `json:"image"`
+}
+
+type CreateCompanyInput struct {
+	Name   string `json:"name"`
+	Status bool   `json:"status"`
+}
+
+type CreateModelInput struct {
+	CompanyID uuid.UUID `json:"company_id"`
+	Name      string    `json:"name"`
+}
+
+type CreateModelVariantInput struct {
+	ModelID    uuid.UUID `json:"model_id"`
+	ModelType  string    `json:"model_type"`
+	ModelImage string    `json:"model_image"`
+}
+
+type CreateProductPartInput struct {
+	CompanyID  uuid.UUID `json:"company_id"`
+	ModelID    uuid.UUID `json:"model_id"`
+	BrandID    uuid.UUID `json:"brand_id"`
+	CategoryID uuid.UUID `json:"category_id"`
+	PartNo     string    `json:"part_no"`
+	IsActive   bool      `json:"is_active"`
+}
+
 type CreateRefreshTokenInput struct {
 	ID         uuid.UUID  `json:"id"`
 	UserID     uuid.UUID  `json:"userId"`
