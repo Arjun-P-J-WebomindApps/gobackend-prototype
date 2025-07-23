@@ -2,7 +2,6 @@
 #--Companies----------------------------------------------------
 
 type Company{
-    id:UUID!
     name:String!
     status:Boolean!
 }
@@ -16,7 +15,6 @@ input CreateCompanyInput{
 #--Model------------------------------------------------------------
 
 type Model{
-    id:UUID!
     company_id:UUID!
     name:String!
 }
@@ -28,7 +26,6 @@ input CreateModelInput {
 
 
 type ModelVariant{
-    id:UUID!
     model_id:UUID!
     model_type:String!
     model_image:String!
@@ -43,7 +40,6 @@ input CreateModelVariantInput{
 #--Brands-----------------------
 
 type Brand{
-    id:UUID!
     name:String!
 }
 
@@ -56,7 +52,6 @@ input CreateBrandInput{
 #---Categories--------------------------
 
 type Category{
-    id:UUID!
     name:String!
     image:String!
 }
@@ -69,7 +64,6 @@ input CreateCategoryInput{
 #--ProductParts----------------------------------
 
 type ProductPart{
-    id:UUID!
     company_id:UUID!
     model_id:UUID!
     brand_id:UUID!
@@ -85,4 +79,34 @@ input CreateProductPartInput{
     category_name:String!
     part_no:String!
     is_active:Boolean!
+}
+
+#---Customer----------------------------------------------
+
+type Customer{
+    customer_company_name:String!
+    contact_person:String!
+    mobile:String!
+    type:String!
+    customer_designation:String!
+    address:String!
+    flat:String!
+    street:String!
+    city:String!
+    state:String!
+    pincode:String!
+}
+
+input CreateCustomerInput{
+    customer_company_name:String!
+    contact_person:String!
+    mobile:String!
+    type:String!
+    customer_designation:String!
+    address:String!
+    flat:String!
+    street:String!
+    city:String!
+    state:String!
+    pincode:String!
 }

@@ -72,6 +72,24 @@ func (r *queryResolver) GetSessionStatus(ctx context.Context, sessionID uuid.UUI
 	}, nil
 }
 
+// GetAllCompany is the resolver for the getAllCompany field.
+func (r *queryResolver) GetAllCompany(ctx context.Context) ([]*models.Company, error) {
+	companies, err := r.DB.Queries.GetAllCompanies(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("couldt fetch companies")
+	}
+
+	companiesPtr := make([]*models.Company, 0, len(companies))
+
+	for i, _ := range companies {
+		company := companies[i]
+		companiesPtr = append(companiesPtr, &company)
+	}
+
+	return companiesPtr, nil
+}
+
 // GetCompanyByName is the resolver for the getCompanyByName field.
 func (r *queryResolver) GetCompanyByName(ctx context.Context, name string) (*models.Company, error) {
 	company, err := r.DB.Queries.GetCompanyByName(ctx, name)
@@ -81,6 +99,24 @@ func (r *queryResolver) GetCompanyByName(ctx context.Context, name string) (*mod
 	}
 
 	return &company, nil
+}
+
+// GetAllCustomers is the resolver for the getAllCustomers field.
+func (r *queryResolver) GetAllCustomers(ctx context.Context) ([]*models.Customer, error) {
+	customers, err := r.DB.Queries.GetAllCustomers(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("couldnt get all customers")
+	}
+
+	customersPtr := make([]*models.Customer, 0, len(customers))
+
+	for i := range customers {
+		customer := customers[i]
+		customersPtr = append(customersPtr, &customer)
+	}
+
+	return customersPtr, nil
 }
 
 // Query returns generated.QueryResolver implementation.

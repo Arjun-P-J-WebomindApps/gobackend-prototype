@@ -20,7 +20,7 @@ type CORS struct {
 func NewRouter(appCtx *app_context.Context) *gin.Engine {
 	router := gin.Default()
 	cors := CORS{
-		AllowedOrigins: []string{"http://localhost:8000"},
+		AllowedOrigins: []string{"http://localhost:8000", "http://localhost:3050"},
 		AllowedHeaders: []string{"Content-Type", "Authorization"},
 		AllowedMethods: []string{"POST", "GET"},
 	}

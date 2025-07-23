@@ -59,6 +59,20 @@ type ProductPartInput struct {
 	IsActive     bool   `json:"is_active"`
 }
 
+type CustomerInput struct {
+	CustomerCompanyName string `json:"customer_company_name"`
+	ContactPerson       string `json:"contact_person"`
+	Mobile              string `json:"mobile"`
+	Type                string `json:"type"`
+	CustomerDesignation string `json:"customer_designation"`
+	Address             string `json:"address"`
+	Flat                string `json:"flat"`
+	Street              string `json:"street"`
+	City                string `json:"city"`
+	State               string `json:"state"`
+	Pincode             string `json:"pincode"`
+}
+
 type Variables[T any] struct {
 	Input T `json:"input"`
 }
@@ -281,9 +295,34 @@ func Products() {
 	}
 
 	UploadData("products", createProductPart)
+
+	createCustomer := func(p []string) GraphQlRequest[CustomerInput] {
+		customer := GraphQlRequest[CustomerInput]{
+			Query: "mutation CreateCustomer($input: CreateCustomerInput!) { createCustomer(input: $input) { customer_company_name contact_person mobile type customer_designation address flat street city state pincode } }",
+			Variables: Variables[CustomerInput]{
+				Input: CustomerInput{
+					CustomerCompanyName: p[1],
+					ContactPerson:       p[2],
+					Mobile:              p[3],
+					Type:                p[4],
+					CustomerDesignation: p[5],
+					Address:             p[6],
+					Flat:                p[7],
+					Street:              p[8],
+					City:                p[9],
+					State:               p[10],
+					Pincode:             p[11],
+				},
+			},
+		}
+
+		return customer
+	}
+
+	UploadData("customers", createCustomer)
 }
 
 func ImportData() {
-	Auth()
+	//Auth()
 	Products()
 }

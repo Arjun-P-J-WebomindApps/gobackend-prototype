@@ -7,6 +7,9 @@ INSERT INTO companies (id,name,status) VALUES ($1,$2,$3) RETURNING *;
 -- name: GetCompanyByName :one
 SELECT * FROM companies WHERE name=$1;
 
+-- name: GetAllCompanies :many
+SELECT * FROM companies;
+
 
 --Models --------------------------------------------------------------
 
@@ -66,3 +69,12 @@ SELECT * FROM product_parts WHERE brand_id=$1;
 
 -- name: GetProductPartsByPartNo :one
 SELECT * FROM product_parts WHERE part_no=$1;
+
+--Customer-----------------------------------------------------------------------
+
+
+-- name: CreateCustomer :one
+INSERT INTO customers (id,customer_company_name,contact_person,mobile,type,customer_designation,address,flat,street,city,state,pincode,created_at,updated_at,deleted_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) RETURNING *;
+
+-- name: GetAllCustomers :many
+SELECT * FROM customers;

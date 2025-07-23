@@ -33,6 +33,7 @@ type MutationResolver interface {
 	CreateBrand(ctx context.Context, input model.CreateBrandInput) (*models.Brand, error)
 	CreateCategory(ctx context.Context, input model.CreateCategoryInput) (*models.Category, error)
 	CreateProductPart(ctx context.Context, input model.CreateProductPartInput) (*models.ProductPart, error)
+	CreateCustomer(ctx context.Context, input model.CreateCustomerInput) (*models.Customer, error)
 }
 
 // endregion ************************** generated!.gotpl **************************
@@ -105,6 +106,29 @@ func (ec *executionContext) field_Mutation_createCompany_argsInput(
 	}
 
 	var zeroVal model.CreateCompanyInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_createCustomer_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_createCustomer_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_createCustomer_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (model.CreateCustomerInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNCreateCustomerInput2githubᚗcomᚋArjunᚑPᚑJᚑWebomindAppsᚋgobackendᚑprototypeᚋinternalᚋgraphᚋmodelᚐCreateCustomerInput(ctx, tmp)
+	}
+
+	var zeroVal model.CreateCustomerInput
 	return zeroVal, nil
 }
 
@@ -960,8 +984,6 @@ func (ec *executionContext) fieldContext_Mutation_createCompany(ctx context.Cont
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_Company_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Company_name(ctx, field)
 			case "status":
@@ -1023,8 +1045,6 @@ func (ec *executionContext) fieldContext_Mutation_createModel(ctx context.Contex
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_Model_id(ctx, field)
 			case "company_id":
 				return ec.fieldContext_Model_company_id(ctx, field)
 			case "name":
@@ -1086,8 +1106,6 @@ func (ec *executionContext) fieldContext_Mutation_createModelVariant(ctx context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_ModelVariant_id(ctx, field)
 			case "model_id":
 				return ec.fieldContext_ModelVariant_model_id(ctx, field)
 			case "model_type":
@@ -1151,8 +1169,6 @@ func (ec *executionContext) fieldContext_Mutation_createBrand(ctx context.Contex
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_Brand_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Brand_name(ctx, field)
 			}
@@ -1212,8 +1228,6 @@ func (ec *executionContext) fieldContext_Mutation_createCategory(ctx context.Con
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_Category_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Category_name(ctx, field)
 			case "image":
@@ -1275,8 +1289,6 @@ func (ec *executionContext) fieldContext_Mutation_createProductPart(ctx context.
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_ProductPart_id(ctx, field)
 			case "company_id":
 				return ec.fieldContext_ProductPart_company_id(ctx, field)
 			case "model_id":
@@ -1301,6 +1313,85 @@ func (ec *executionContext) fieldContext_Mutation_createProductPart(ctx context.
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createProductPart_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createCustomer(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createCustomer(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateCustomer(rctx, fc.Args["input"].(model.CreateCustomerInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.Customer)
+	fc.Result = res
+	return ec.marshalNCustomer2ᚖgithubᚗcomᚋArjunᚑPᚑJᚑWebomindAppsᚋgobackendᚑprototypeᚋinternalᚋdbᚋmodelsᚐCustomer(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createCustomer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "customer_company_name":
+				return ec.fieldContext_Customer_customer_company_name(ctx, field)
+			case "contact_person":
+				return ec.fieldContext_Customer_contact_person(ctx, field)
+			case "mobile":
+				return ec.fieldContext_Customer_mobile(ctx, field)
+			case "type":
+				return ec.fieldContext_Customer_type(ctx, field)
+			case "customer_designation":
+				return ec.fieldContext_Customer_customer_designation(ctx, field)
+			case "address":
+				return ec.fieldContext_Customer_address(ctx, field)
+			case "flat":
+				return ec.fieldContext_Customer_flat(ctx, field)
+			case "street":
+				return ec.fieldContext_Customer_street(ctx, field)
+			case "city":
+				return ec.fieldContext_Customer_city(ctx, field)
+			case "state":
+				return ec.fieldContext_Customer_state(ctx, field)
+			case "pincode":
+				return ec.fieldContext_Customer_pincode(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Customer", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createCustomer_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -1432,6 +1523,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "createProductPart":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createProductPart(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createCustomer":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createCustomer(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++

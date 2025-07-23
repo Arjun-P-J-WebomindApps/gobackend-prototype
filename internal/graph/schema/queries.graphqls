@@ -8,9 +8,10 @@ type Query {
   getLatestOTP(userId: UUID!): UserOTP
   getSessionByUserId(userId: UUID!): UserSession
   getSessionStatus(sessionId:UUID!):SessionStatus
-
+  
   #--Products---------------------
   
-
+  getAllCompany:[Company!]!
   getCompanyByName(name:String!):Company
+  getAllCustomers:[Customer!]!
 }

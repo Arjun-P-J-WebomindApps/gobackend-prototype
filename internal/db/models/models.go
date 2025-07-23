@@ -28,6 +28,24 @@ type Company struct {
 	Status bool
 }
 
+type Customer struct {
+	ID                  uuid.UUID
+	CustomerCompanyName string
+	ContactPerson       string
+	Mobile              string
+	Type                string
+	CustomerDesignation sql.NullString
+	Address             sql.NullString
+	Flat                sql.NullString
+	Street              sql.NullString
+	City                sql.NullString
+	State               sql.NullString
+	Pincode             sql.NullString
+	CreatedAt           time.Time
+	UpdatedAt           time.Time
+	DeletedAt           sql.NullTime
+}
+
 type Model struct {
 	ID        uuid.UUID
 	CompanyID uuid.UUID

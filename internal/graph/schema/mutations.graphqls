@@ -1,17 +1,17 @@
 type Mutation {
   # ---Auth Mutations---------------------------------------------------
 
-    #Internal
-    createUser(input: CreateUserInput!): User!
-    createUserOTP(input: CreateUserOTPInput!): UserOTP!
-    createUserSession(input: CreateUserSessionInput!): UserSession!
-    createRefreshToken(input: CreateRefreshTokenInput!): RefreshToken!
-    revokeRefreshToken(tokenId: UUID!): Boolean!
+  #Internal
+  createUser(input: CreateUserInput!): User!
+  createUserOTP(input: CreateUserOTPInput!): UserOTP!
+  createUserSession(input: CreateUserSessionInput!): UserSession!
+  createRefreshToken(input: CreateRefreshTokenInput!): RefreshToken!
+  revokeRefreshToken(tokenId: UUID!): Boolean!
 
-    # Outside
-    login(input:LoginInput!):AuthPayload!
-    verifyOTP(input:VerifyOTPInput!):AuthPayload!
-    refreshToken(input:RefreshTokenInput!):AuthPayload!
+  # Outside
+  login(input:LoginInput!):AuthPayload!
+  verifyOTP(input:VerifyOTPInput!):AuthPayload!
+  refreshToken(input:RefreshTokenInput!):AuthPayload!
   
 
   #--Products------------------------------------------------------------------
@@ -22,5 +22,5 @@ type Mutation {
   createBrand(input:CreateBrandInput!):Brand!
   createCategory(input:CreateCategoryInput!):Category!
   createProductPart(input:CreateProductPartInput!):ProductPart!
-
+  createCustomer(input:CreateCustomerInput!):Customer!
 }

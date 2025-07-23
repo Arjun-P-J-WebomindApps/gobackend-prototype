@@ -267,7 +267,6 @@ func (r *mutationResolver) RefreshToken(ctx context.Context, input model.Refresh
 
 // CreateCompany is the resolver for the createCompany field.
 func (r *mutationResolver) CreateCompany(ctx context.Context, input model.CreateCompanyInput) (*models.Company, error) {
-
 	uuid := uuid.New()
 	company, err := r.DB.Queries.CreateCompanies(ctx, models.CreateCompaniesParams{
 		ID:     uuid,
@@ -333,7 +332,6 @@ func (r *mutationResolver) CreateModelVariant(ctx context.Context, input model.C
 
 // CreateBrand is the resolver for the createBrand field.
 func (r *mutationResolver) CreateBrand(ctx context.Context, input model.CreateBrandInput) (*models.Brand, error) {
-
 	uuid := uuid.New()
 
 	brand, err := r.DB.Queries.CreateBrand(ctx, models.CreateBrandParams{
@@ -346,7 +344,6 @@ func (r *mutationResolver) CreateBrand(ctx context.Context, input model.CreateBr
 	}
 
 	return &brand, nil
-
 }
 
 // CreateCategory is the resolver for the createCategory field.
@@ -408,6 +405,33 @@ func (r *mutationResolver) CreateProductPart(ctx context.Context, input model.Cr
 	}
 
 	return &productPart, nil
+}
+
+// CreateCustomer is the resolver for the createCustomer field.
+func (r *mutationResolver) CreateCustomer(ctx context.Context, input model.CreateCustomerInput) (*models.Customer, error) {
+	uuid := uuid.New()
+	customer, err := r.DB.Queries.CreateCustomer(ctx, models.CreateCustomerParams{
+		ID:                  uuid,
+		CustomerCompanyName: input.CustomerCompanyName,
+		ContactPerson:       input.ContactPerson,
+		Mobile:              input.Mobile,
+		Type:                input.Type,
+		CustomerDesignation: utils.ToNullString(input.CustomerDesignation),
+		Address:             utils.ToNullString(input.Address),
+		Flat:                utils.ToNullString(input.Flat),
+		Street:              utils.ToNullString(input.Street),
+		City:                utils.ToNullString(input.City),
+		State:               utils.ToNullString(input.State),
+		Pincode:             utils.ToNullString(input.Pincode),
+		CreatedAt:           time.Now(),
+		UpdatedAt:           time.Now(),
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("couldnt create customer")
+	}
+
+	return &customer, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

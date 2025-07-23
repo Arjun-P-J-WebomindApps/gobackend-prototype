@@ -58,6 +58,7 @@ CREATE TABLE refresh_tokens (
   replaced_by UUID REFERENCES refresh_tokens(id) -- for rotation
 );
 
+
 -- +goose Down
 DROP TABLE refresh_tokens;
 DROP TABLE user_sessions;

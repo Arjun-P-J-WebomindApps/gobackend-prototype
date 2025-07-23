@@ -31,6 +31,20 @@ type CreateCompanyInput struct {
 	Status bool   `json:"status"`
 }
 
+type CreateCustomerInput struct {
+	CustomerCompanyName string `json:"customer_company_name"`
+	ContactPerson       string `json:"contact_person"`
+	Mobile              string `json:"mobile"`
+	Type                string `json:"type"`
+	CustomerDesignation string `json:"customer_designation"`
+	Address             string `json:"address"`
+	Flat                string `json:"flat"`
+	Street              string `json:"street"`
+	City                string `json:"city"`
+	State               string `json:"state"`
+	Pincode             string `json:"pincode"`
+}
+
 type CreateModelInput struct {
 	CompanyName string `json:"company_name"`
 	Name        string `json:"name"`

@@ -71,6 +71,70 @@ func (q *Queries) CreateCompanies(ctx context.Context, arg CreateCompaniesParams
 	return i, err
 }
 
+const createCustomer = `-- name: CreateCustomer :one
+
+
+INSERT INTO customers (id,customer_company_name,contact_person,mobile,type,customer_designation,address,flat,street,city,state,pincode,created_at,updated_at,deleted_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) RETURNING id, customer_company_name, contact_person, mobile, type, customer_designation, address, flat, street, city, state, pincode, created_at, updated_at, deleted_at
+`
+
+type CreateCustomerParams struct {
+	ID                  uuid.UUID
+	CustomerCompanyName string
+	ContactPerson       string
+	Mobile              string
+	Type                string
+	CustomerDesignation sql.NullString
+	Address             sql.NullString
+	Flat                sql.NullString
+	Street              sql.NullString
+	City                sql.NullString
+	State               sql.NullString
+	Pincode             sql.NullString
+	CreatedAt           time.Time
+	UpdatedAt           time.Time
+	DeletedAt           sql.NullTime
+}
+
+// Customer-----------------------------------------------------------------------
+func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) (Customer, error) {
+	row := q.db.QueryRowContext(ctx, createCustomer,
+		arg.ID,
+		arg.CustomerCompanyName,
+		arg.ContactPerson,
+		arg.Mobile,
+		arg.Type,
+		arg.CustomerDesignation,
+		arg.Address,
+		arg.Flat,
+		arg.Street,
+		arg.City,
+		arg.State,
+		arg.Pincode,
+		arg.CreatedAt,
+		arg.UpdatedAt,
+		arg.DeletedAt,
+	)
+	var i Customer
+	err := row.Scan(
+		&i.ID,
+		&i.CustomerCompanyName,
+		&i.ContactPerson,
+		&i.Mobile,
+		&i.Type,
+		&i.CustomerDesignation,
+		&i.Address,
+		&i.Flat,
+		&i.Street,
+		&i.City,
+		&i.State,
+		&i.Pincode,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
 const createModel = `-- name: CreateModel :one
 
 
@@ -164,6 +228,76 @@ func (q *Queries) CreateProductParts(ctx context.Context, arg CreateProductParts
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const getAllCompanies = `-- name: GetAllCompanies :many
+SELECT id, name, status FROM companies
+`
+
+func (q *Queries) GetAllCompanies(ctx context.Context) ([]Company, error) {
+	rows, err := q.db.QueryContext(ctx, getAllCompanies)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Company
+	for rows.Next() {
+		var i Company
+		if err := rows.Scan(&i.ID, &i.Name, &i.Status); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getAllCustomers = `-- name: GetAllCustomers :many
+SELECT id, customer_company_name, contact_person, mobile, type, customer_designation, address, flat, street, city, state, pincode, created_at, updated_at, deleted_at FROM customers
+`
+
+func (q *Queries) GetAllCustomers(ctx context.Context) ([]Customer, error) {
+	rows, err := q.db.QueryContext(ctx, getAllCustomers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Customer
+	for rows.Next() {
+		var i Customer
+		if err := rows.Scan(
+			&i.ID,
+			&i.CustomerCompanyName,
+			&i.ContactPerson,
+			&i.Mobile,
+			&i.Type,
+			&i.CustomerDesignation,
+			&i.Address,
+			&i.Flat,
+			&i.Street,
+			&i.City,
+			&i.State,
+			&i.Pincode,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getBrandByName = `-- name: GetBrandByName :one

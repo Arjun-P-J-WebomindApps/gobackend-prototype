@@ -1,10 +1,10 @@
 package main
 
-import "github.com/Arjun-P-J-WebomindApps/gobackend-prototype/scripts/typesense"
+import "github.com/Arjun-P-J-WebomindApps/gobackend-prototype/scripts/sql"
 
 func main() {
-	//ImportData()
-	typesense.Setup()
+	sql.ImportData()
+	// typesense.Setup()
 
-	typesense.ExportData()
+	// typesense.ExportData()
 }

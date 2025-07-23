@@ -35,6 +35,7 @@ type Config struct {
 
 type ResolverRoot interface {
 	Category() CategoryResolver
+	Customer() CustomerResolver
 	ModelVariant() ModelVariantResolver
 	Mutation() MutationResolver
 	ProductPart() ProductPartResolver
@@ -58,30 +59,39 @@ type ComplexityRoot struct {
 	}
 
 	Brand struct {
-		ID   func(childComplexity int) int
 		Name func(childComplexity int) int
 	}
 
 	Category struct {
-		ID    func(childComplexity int) int
 		Image func(childComplexity int) int
 		Name  func(childComplexity int) int
 	}
 
 	Company struct {
-		ID     func(childComplexity int) int
 		Name   func(childComplexity int) int
 		Status func(childComplexity int) int
 	}
 
+	Customer struct {
+		Address             func(childComplexity int) int
+		City                func(childComplexity int) int
+		ContactPerson       func(childComplexity int) int
+		CustomerCompanyName func(childComplexity int) int
+		CustomerDesignation func(childComplexity int) int
+		Flat                func(childComplexity int) int
+		Mobile              func(childComplexity int) int
+		Pincode             func(childComplexity int) int
+		State               func(childComplexity int) int
+		Street              func(childComplexity int) int
+		Type                func(childComplexity int) int
+	}
+
 	Model struct {
 		CompanyID func(childComplexity int) int
-		ID        func(childComplexity int) int
 		Name      func(childComplexity int) int
 	}
 
 	ModelVariant struct {
-		ID         func(childComplexity int) int
 		ModelID    func(childComplexity int) int
 		ModelImage func(childComplexity int) int
 		ModelType  func(childComplexity int) int
@@ -91,6 +101,7 @@ type ComplexityRoot struct {
 		CreateBrand        func(childComplexity int, input model.CreateBrandInput) int
 		CreateCategory     func(childComplexity int, input model.CreateCategoryInput) int
 		CreateCompany      func(childComplexity int, input model.CreateCompanyInput) int
+		CreateCustomer     func(childComplexity int, input model.CreateCustomerInput) int
 		CreateModel        func(childComplexity int, input model.CreateModelInput) int
 		CreateModelVariant func(childComplexity int, input model.CreateModelVariantInput) int
 		CreateProductPart  func(childComplexity int, input model.CreateProductPartInput) int
@@ -108,13 +119,14 @@ type ComplexityRoot struct {
 		BrandID    func(childComplexity int) int
 		CategoryID func(childComplexity int) int
 		CompanyID  func(childComplexity int) int
-		ID         func(childComplexity int) int
 		IsActive   func(childComplexity int) int
 		ModelID    func(childComplexity int) int
 		PartNo     func(childComplexity int) int
 	}
 
 	Query struct {
+		GetAllCompany      func(childComplexity int) int
+		GetAllCustomers    func(childComplexity int) int
 		GetAllUsers        func(childComplexity int) int
 		GetCompanyByName   func(childComplexity int, name string) int
 		GetLatestOtp       func(childComplexity int, userID uuid.UUID) int
@@ -229,26 +241,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.AuthPayload.UserID(childComplexity), true
 
-	case "Brand.id":
-		if e.complexity.Brand.ID == nil {
-			break
-		}
-
-		return e.complexity.Brand.ID(childComplexity), true
-
 	case "Brand.name":
 		if e.complexity.Brand.Name == nil {
 			break
 		}
 
 		return e.complexity.Brand.Name(childComplexity), true
-
-	case "Category.id":
-		if e.complexity.Category.ID == nil {
-			break
-		}
-
-		return e.complexity.Category.ID(childComplexity), true
 
 	case "Category.image":
 		if e.complexity.Category.Image == nil {
@@ -264,13 +262,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Category.Name(childComplexity), true
 
-	case "Company.id":
-		if e.complexity.Company.ID == nil {
-			break
-		}
-
-		return e.complexity.Company.ID(childComplexity), true
-
 	case "Company.name":
 		if e.complexity.Company.Name == nil {
 			break
@@ -285,6 +276,83 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Company.Status(childComplexity), true
 
+	case "Customer.address":
+		if e.complexity.Customer.Address == nil {
+			break
+		}
+
+		return e.complexity.Customer.Address(childComplexity), true
+
+	case "Customer.city":
+		if e.complexity.Customer.City == nil {
+			break
+		}
+
+		return e.complexity.Customer.City(childComplexity), true
+
+	case "Customer.contact_person":
+		if e.complexity.Customer.ContactPerson == nil {
+			break
+		}
+
+		return e.complexity.Customer.ContactPerson(childComplexity), true
+
+	case "Customer.customer_company_name":
+		if e.complexity.Customer.CustomerCompanyName == nil {
+			break
+		}
+
+		return e.complexity.Customer.CustomerCompanyName(childComplexity), true
+
+	case "Customer.customer_designation":
+		if e.complexity.Customer.CustomerDesignation == nil {
+			break
+		}
+
+		return e.complexity.Customer.CustomerDesignation(childComplexity), true
+
+	case "Customer.flat":
+		if e.complexity.Customer.Flat == nil {
+			break
+		}
+
+		return e.complexity.Customer.Flat(childComplexity), true
+
+	case "Customer.mobile":
+		if e.complexity.Customer.Mobile == nil {
+			break
+		}
+
+		return e.complexity.Customer.Mobile(childComplexity), true
+
+	case "Customer.pincode":
+		if e.complexity.Customer.Pincode == nil {
+			break
+		}
+
+		return e.complexity.Customer.Pincode(childComplexity), true
+
+	case "Customer.state":
+		if e.complexity.Customer.State == nil {
+			break
+		}
+
+		return e.complexity.Customer.State(childComplexity), true
+
+	case "Customer.street":
+		if e.complexity.Customer.Street == nil {
+			break
+		}
+
+		return e.complexity.Customer.Street(childComplexity), true
+
+	case "Customer.type":
+		if e.complexity.Customer.Type == nil {
+			break
+		}
+
+		return e.complexity.Customer.Type(childComplexity), true
+
 	case "Model.company_id":
 		if e.complexity.Model.CompanyID == nil {
 			break
@@ -292,26 +360,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Model.CompanyID(childComplexity), true
 
-	case "Model.id":
-		if e.complexity.Model.ID == nil {
-			break
-		}
-
-		return e.complexity.Model.ID(childComplexity), true
-
 	case "Model.name":
 		if e.complexity.Model.Name == nil {
 			break
 		}
 
 		return e.complexity.Model.Name(childComplexity), true
-
-	case "ModelVariant.id":
-		if e.complexity.ModelVariant.ID == nil {
-			break
-		}
-
-		return e.complexity.ModelVariant.ID(childComplexity), true
 
 	case "ModelVariant.model_id":
 		if e.complexity.ModelVariant.ModelID == nil {
@@ -369,6 +423,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.CreateCompany(childComplexity, args["input"].(model.CreateCompanyInput)), true
+
+	case "Mutation.createCustomer":
+		if e.complexity.Mutation.CreateCustomer == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createCustomer_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateCustomer(childComplexity, args["input"].(model.CreateCustomerInput)), true
 
 	case "Mutation.createModel":
 		if e.complexity.Mutation.CreateModel == nil {
@@ -523,13 +589,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.ProductPart.CompanyID(childComplexity), true
 
-	case "ProductPart.id":
-		if e.complexity.ProductPart.ID == nil {
-			break
-		}
-
-		return e.complexity.ProductPart.ID(childComplexity), true
-
 	case "ProductPart.is_active":
 		if e.complexity.ProductPart.IsActive == nil {
 			break
@@ -550,6 +609,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.ProductPart.PartNo(childComplexity), true
+
+	case "Query.getAllCompany":
+		if e.complexity.Query.GetAllCompany == nil {
+			break
+		}
+
+		return e.complexity.Query.GetAllCompany(childComplexity), true
+
+	case "Query.getAllCustomers":
+		if e.complexity.Query.GetAllCustomers == nil {
+			break
+		}
+
+		return e.complexity.Query.GetAllCustomers(childComplexity), true
 
 	case "Query.getAllUsers":
 		if e.complexity.Query.GetAllUsers == nil {
@@ -881,6 +954,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateBrandInput,
 		ec.unmarshalInputCreateCategoryInput,
 		ec.unmarshalInputCreateCompanyInput,
+		ec.unmarshalInputCreateCustomerInput,
 		ec.unmarshalInputCreateModelInput,
 		ec.unmarshalInputCreateModelVariantInput,
 		ec.unmarshalInputCreateProductPartInput,
@@ -1121,17 +1195,17 @@ type SessionStatus {
 	{Name: "../schema/mutations.graphqls", Input: `type Mutation {
   # ---Auth Mutations---------------------------------------------------
 
-    #Internal
-    createUser(input: CreateUserInput!): User!
-    createUserOTP(input: CreateUserOTPInput!): UserOTP!
-    createUserSession(input: CreateUserSessionInput!): UserSession!
-    createRefreshToken(input: CreateRefreshTokenInput!): RefreshToken!
-    revokeRefreshToken(tokenId: UUID!): Boolean!
+  #Internal
+  createUser(input: CreateUserInput!): User!
+  createUserOTP(input: CreateUserOTPInput!): UserOTP!
+  createUserSession(input: CreateUserSessionInput!): UserSession!
+  createRefreshToken(input: CreateRefreshTokenInput!): RefreshToken!
+  revokeRefreshToken(tokenId: UUID!): Boolean!
 
-    # Outside
-    login(input:LoginInput!):AuthPayload!
-    verifyOTP(input:VerifyOTPInput!):AuthPayload!
-    refreshToken(input:RefreshTokenInput!):AuthPayload!
+  # Outside
+  login(input:LoginInput!):AuthPayload!
+  verifyOTP(input:VerifyOTPInput!):AuthPayload!
+  refreshToken(input:RefreshTokenInput!):AuthPayload!
   
 
   #--Products------------------------------------------------------------------
@@ -1142,13 +1216,12 @@ type SessionStatus {
   createBrand(input:CreateBrandInput!):Brand!
   createCategory(input:CreateCategoryInput!):Category!
   createProductPart(input:CreateProductPartInput!):ProductPart!
-
+  createCustomer(input:CreateCustomerInput!):Customer!
 }`, BuiltIn: false},
 	{Name: "../schema/products.graphqls", Input: `
 #--Companies----------------------------------------------------
 
 type Company{
-    id:UUID!
     name:String!
     status:Boolean!
 }
@@ -1162,7 +1235,6 @@ input CreateCompanyInput{
 #--Model------------------------------------------------------------
 
 type Model{
-    id:UUID!
     company_id:UUID!
     name:String!
 }
@@ -1174,7 +1246,6 @@ input CreateModelInput {
 
 
 type ModelVariant{
-    id:UUID!
     model_id:UUID!
     model_type:String!
     model_image:String!
@@ -1189,7 +1260,6 @@ input CreateModelVariantInput{
 #--Brands-----------------------
 
 type Brand{
-    id:UUID!
     name:String!
 }
 
@@ -1202,7 +1272,6 @@ input CreateBrandInput{
 #---Categories--------------------------
 
 type Category{
-    id:UUID!
     name:String!
     image:String!
 }
@@ -1215,7 +1284,6 @@ input CreateCategoryInput{
 #--ProductParts----------------------------------
 
 type ProductPart{
-    id:UUID!
     company_id:UUID!
     model_id:UUID!
     brand_id:UUID!
@@ -1231,6 +1299,36 @@ input CreateProductPartInput{
     category_name:String!
     part_no:String!
     is_active:Boolean!
+}
+
+#---Customer----------------------------------------------
+
+type Customer{
+    customer_company_name:String!
+    contact_person:String!
+    mobile:String!
+    type:String!
+    customer_designation:String!
+    address:String!
+    flat:String!
+    street:String!
+    city:String!
+    state:String!
+    pincode:String!
+}
+
+input CreateCustomerInput{
+    customer_company_name:String!
+    contact_person:String!
+    mobile:String!
+    type:String!
+    customer_designation:String!
+    address:String!
+    flat:String!
+    street:String!
+    city:String!
+    state:String!
+    pincode:String!
 }`, BuiltIn: false},
 	{Name: "../schema/queries.graphqls", Input: `scalar UUID
 scalar Time
@@ -1242,11 +1340,12 @@ type Query {
   getLatestOTP(userId: UUID!): UserOTP
   getSessionByUserId(userId: UUID!): UserSession
   getSessionStatus(sessionId:UUID!):SessionStatus
-
+  
   #--Products---------------------
   
-
+  getAllCompany:[Company!]!
   getCompanyByName(name:String!):Company
+  getAllCustomers:[Customer!]!
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)

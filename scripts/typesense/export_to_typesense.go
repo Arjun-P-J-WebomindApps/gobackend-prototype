@@ -66,7 +66,7 @@ func SetupTable(ctx context.Context) {
 	_, err := AppContext.Search.SearchContext.Collection("product_parts").Delete(ctx)
 
 	if err != nil && !strings.Contains(err.Error(), "Not Found") {
-		fmt.Println("No table to delete")
+		log.Println("No table to delete")
 	} else if err == nil {
 		log.Println("Deleted table")
 	}

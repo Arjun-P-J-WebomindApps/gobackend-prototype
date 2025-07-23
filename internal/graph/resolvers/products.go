@@ -17,6 +17,41 @@ func (r *categoryResolver) Image(ctx context.Context, obj *models.Category) (str
 	panic(fmt.Errorf("not implemented: Image - image"))
 }
 
+// CustomerDesignation is the resolver for the customer_designation field.
+func (r *customerResolver) CustomerDesignation(ctx context.Context, obj *models.Customer) (string, error) {
+	panic(fmt.Errorf("not implemented: CustomerDesignation - customer_designation"))
+}
+
+// Address is the resolver for the address field.
+func (r *customerResolver) Address(ctx context.Context, obj *models.Customer) (string, error) {
+	panic(fmt.Errorf("not implemented: Address - address"))
+}
+
+// Flat is the resolver for the flat field.
+func (r *customerResolver) Flat(ctx context.Context, obj *models.Customer) (string, error) {
+	panic(fmt.Errorf("not implemented: Flat - flat"))
+}
+
+// Street is the resolver for the street field.
+func (r *customerResolver) Street(ctx context.Context, obj *models.Customer) (string, error) {
+	panic(fmt.Errorf("not implemented: Street - street"))
+}
+
+// City is the resolver for the city field.
+func (r *customerResolver) City(ctx context.Context, obj *models.Customer) (string, error) {
+	panic(fmt.Errorf("not implemented: City - city"))
+}
+
+// State is the resolver for the state field.
+func (r *customerResolver) State(ctx context.Context, obj *models.Customer) (string, error) {
+	panic(fmt.Errorf("not implemented: State - state"))
+}
+
+// Pincode is the resolver for the pincode field.
+func (r *customerResolver) Pincode(ctx context.Context, obj *models.Customer) (string, error) {
+	panic(fmt.Errorf("not implemented: Pincode - pincode"))
+}
+
 // ModelType is the resolver for the model_type field.
 func (r *modelVariantResolver) ModelType(ctx context.Context, obj *models.ModelVariant) (string, error) {
 	panic(fmt.Errorf("not implemented: ModelType - model_type"))
@@ -35,6 +70,9 @@ func (r *productPartResolver) IsActive(ctx context.Context, obj *models.ProductP
 // Category returns generated.CategoryResolver implementation.
 func (r *Resolver) Category() generated.CategoryResolver { return &categoryResolver{r} }
 
+// Customer returns generated.CustomerResolver implementation.
+func (r *Resolver) Customer() generated.CustomerResolver { return &customerResolver{r} }
+
 // ModelVariant returns generated.ModelVariantResolver implementation.
 func (r *Resolver) ModelVariant() generated.ModelVariantResolver { return &modelVariantResolver{r} }
 
@@ -42,5 +80,27 @@ func (r *Resolver) ModelVariant() generated.ModelVariantResolver { return &model
 func (r *Resolver) ProductPart() generated.ProductPartResolver { return &productPartResolver{r} }
 
 type categoryResolver struct{ *Resolver }
+type customerResolver struct{ *Resolver }
 type modelVariantResolver struct{ *Resolver }
 type productPartResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+/*
+	func (r *customerResolver) CustomerCompanyName(ctx context.Context, obj *models.Customer) (string, error) {
+	panic(fmt.Errorf("not implemented: CustomerCompanyName - customer_company_name"))
+}
+func (r *customerResolver) ContactPerson(ctx context.Context, obj *models.Customer) (string, error) {
+	panic(fmt.Errorf("not implemented: ContactPerson - contact_person"))
+}
+func (r *customerResolver) Mobile(ctx context.Context, obj *models.Customer) (string, error) {
+	panic(fmt.Errorf("not implemented: Mobile - mobile"))
+}
+func (r *customerResolver) Type(ctx context.Context, obj *models.Customer) (string, error) {
+	panic(fmt.Errorf("not implemented: Type - type"))
+}
+*/
